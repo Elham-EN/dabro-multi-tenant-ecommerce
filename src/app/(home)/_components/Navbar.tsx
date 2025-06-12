@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Sidebar from "./Sidebar";
+import { MenuIcon } from "lucide-react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -47,6 +49,7 @@ const navbarItems = [
 
 export default function Navbar(): React.ReactElement {
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   return (
     <nav
       className="h-20 border-b flex justify-between items-center 
@@ -68,7 +71,7 @@ export default function Navbar(): React.ReactElement {
           </NavbarItem>
         ))}
       </div>
-      <div className="hidden lg:flex h-full  bg-amber-200">
+      <div className="hidden lg:flex h-full">
         <Button
           variant={"secondary"}
           className="border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
@@ -84,6 +87,20 @@ export default function Navbar(): React.ReactElement {
           <Link href={"/sign-up"}>Start selling</Link>
         </Button>
       </div>
+      <div className="flex lg:hidden">
+        <Button
+          variant={"ghost"}
+          className="border-transparent bg-white mr-2"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          <MenuIcon className="!w-10 !h-10" />
+        </Button>
+      </div>
+      <Sidebar
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+        items={navbarItems}
+      />
     </nav>
   );
 }
