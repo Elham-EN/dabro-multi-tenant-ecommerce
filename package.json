@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:server": "jest --config jest.server.config.ts",
+    "test:client": "jest --config jest.config.ts",
+    "test:all": "npm run test:client && npm run test:server"
   },
   "dependencies": {
     "@radix-ui/react-progress": "^1.1.7",
