@@ -49,7 +49,7 @@ const navbarItems = [
 
 export default function Navbar(): React.ReactElement {
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   return (
     <nav
       className="h-20 border-b flex justify-between items-center 
