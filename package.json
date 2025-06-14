@@ -11,7 +11,8 @@
     "test:watch": "jest --watch",
     "test:server": "jest --config jest.server.config.ts",
     "test:client": "jest --config jest.config.ts",
-    "test:all": "npm run test:client && npm run test:server"
+    "test:all": "npm run test:client && npm run test:server",
+    "db:fresh": "npm run payload migrate:fresh"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.42.0",

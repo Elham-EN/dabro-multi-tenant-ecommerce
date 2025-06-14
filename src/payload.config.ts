@@ -14,22 +14,35 @@ import { Categories } from "./collections/Categories";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// Everything from your Database choice to the appearance of the
+// Admin Panel is fully controlled through the Payload Config.
 export default buildConfig({
+  // The configuration options for the Admin Panel, including
+  // Custom Components, Live Preview,
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
   },
+  // An array of Collections for Payload to manage
   collections: [Users, Media, Categories],
+  // The Rich Text Editor which will be used by richText fields.
   editor: lexicalEditor(),
+  // Payload will use for any encryption workflows -
+  // for example, password salt / hashing.
   secret: process.env.PAYLOAD_SECRET || "",
+  // Configure TypeScript settings here
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
+  // The Database Adapter which will be used by Payload.
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || "",
   }),
+  // If you would like Payload to offer cropping, focal point
+  // selection, and automatic media resizing, install and pass
+  // the Sharp module to the config here.
   sharp,
   plugins: [
     payloadCloudPlugin(),

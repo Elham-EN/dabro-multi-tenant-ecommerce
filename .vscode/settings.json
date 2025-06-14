@@ -7,5 +7,7 @@
   "terminal.integrated.automationProfile.osx": {
     "path": "/bin/bash",
     "args": ["-l"]
-  }
+  },
+
+  "jest.runMode": "on-demand" // Never run tests automatically
 }
