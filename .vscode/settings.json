@@ -1,0 +1,11 @@
+{
+  "jest.shell": {
+    "path": "/bin/bash",
+    "args": ["--login"]
+  },
+  "jest.jestCommandLine": "npm test --",
+  "terminal.integrated.automationProfile.osx": {
+    "path": "/bin/bash",
+    "args": ["-l"]
+  }
+}
