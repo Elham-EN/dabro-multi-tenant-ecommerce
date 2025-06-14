@@ -9,5 +9,5 @@
     "args": ["-l"]
   },
 
-  "jest.runMode": "on-demand" // Never run tests automatically
+  "jest.runMode": "on-demand"
 }
