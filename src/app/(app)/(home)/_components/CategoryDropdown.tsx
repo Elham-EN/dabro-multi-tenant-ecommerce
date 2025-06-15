@@ -1,14 +1,14 @@
 "use client";
 
 import React, { ReactElement, useRef, useState } from "react";
-import { Category } from "@/payload-types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import useDropdownPosition from "../_hooks/useDropdownPosition";
 import SubcategoryMenu from "./SubcategoryMenu";
+import { CustomCategory } from "../_types/CategoryType";
 
 interface Props {
-  category: Category;
+  category: CustomCategory;
   isActive?: boolean;
   isNavigationHovered?: boolean;
 }
@@ -54,7 +54,7 @@ function CategoryDropdown({
           {category.name}
         </Button>
         {category.subcategories &&
-          (category.subcategories as Category[]).length > 0 && (
+          (category.subcategories as CustomCategory[]).length > 0 && (
             <div
               className={cn(
                 "opacity-0 absolute left-1/2 -translate-x-1/2 border-l-[10px] border-r-[10px] border-b-[10px] border-b-black border-l-transparent border-r-transparent",

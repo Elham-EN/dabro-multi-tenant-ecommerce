@@ -1,11 +1,10 @@
-import { Category } from "@/payload-types";
-
 import React, { ReactElement } from "react";
 import SearchInput from "./SearchInput";
 import Categories from "./Categories";
+import { CustomCategory } from "../_types/CategoryType";
 
 interface Props {
-  data: Category[];
+  data: CustomCategory[];
 }
 function SearchFilters({ data }: Props): ReactElement {
   return (

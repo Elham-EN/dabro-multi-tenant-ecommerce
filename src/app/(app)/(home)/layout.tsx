@@ -5,6 +5,7 @@ import { Category } from "@/payload-types";
 import Navbar from "./_components/Navbar";
 import Footer from "./_components/Footer";
 import SearchFilters from "./_components/SearchFilters";
+import { CustomCategory } from "./_types/CategoryType";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -33,17 +34,18 @@ async function Layout({ children }: LayoutProps): Promise<ReactElement> {
 
   // Removes the nested .docs - Instead of category.subcategories.docs[0],
   // just use category.subcategories[0]
-  const formatedData = data.docs.map((doc) => ({
+  const formatedData: CustomCategory[] = data.docs.map((doc) => ({
     ...doc,
     subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
       ...(doc as Category),
+      subcategories: undefined,
     })),
   }));
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <SearchFilters data={formatedData as unknown as Category[]} />
+      <SearchFilters data={formatedData} />
       <div className="flex-1 bg-[#f4f4f0]">{children}</div>
       <Footer />
     </div>

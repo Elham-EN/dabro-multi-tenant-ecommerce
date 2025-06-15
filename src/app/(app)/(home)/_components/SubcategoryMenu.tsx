@@ -1,9 +1,9 @@
-import { Category } from "@/payload-types";
 import Link from "next/link";
 import React, { ReactElement } from "react";
+import { CustomCategory } from "../_types/CategoryType";
 
 interface Props {
-  category: Category;
+  category: CustomCategory;
   isOpen: boolean;
   dropdownPosition: {
     top: number;
@@ -16,11 +16,7 @@ export default function SubcategoryMenu({
   isOpen,
   dropdownPosition,
 }: Props): ReactElement | null {
-  if (
-    !isOpen ||
-    !category.subcategories ||
-    (category.subcategories as unknown as Category[]).length === 0
-  )
+  if (!isOpen || !category.subcategories || category.subcategories.length === 0)
     return null;
 
   const backgroundColor = category.color || "#F5F5F5";
@@ -42,7 +38,7 @@ export default function SubcategoryMenu({
         -translate-y-[2px]"
       >
         <div>
-          {(category.subcategories as Category[]).map((subCategory) => (
+          {category.subcategories.map((subCategory) => (
             <Link
               key={subCategory.slug}
               href={"/"}

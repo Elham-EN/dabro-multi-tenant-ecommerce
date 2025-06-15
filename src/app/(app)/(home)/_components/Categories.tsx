@@ -1,10 +1,9 @@
-import { Category } from "@/payload-types";
-
 import React, { ReactElement } from "react";
 import CategoryDropdown from "./CategoryDropdown";
+import { CustomCategory } from "../_types/CategoryType";
 
 interface Props {
-  data: Category[];
+  data: CustomCategory[];
 }
 
 function Categories({ data }: Props): ReactElement {
