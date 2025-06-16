@@ -46,7 +46,7 @@ function CategoryDropdown({
           variant={"elevated"}
           className={cn(
             "h-11 px-4 rounded-full",
-            isActive && !isNavigationHovered && "bg-white border-primary",
+            isActive && !isNavigationHovered && "bg-black text-white ",
             isOpen &&
               "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[4px] -translate-y-[4px]"
           )}

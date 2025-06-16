@@ -18,7 +18,7 @@ async function Layout({ children }: LayoutProps): Promise<ReactElement> {
 
   const data = await payload.find({
     collection: "categories",
-    sort: "createdAt",
+    sort: "name",
     // Automatically populate/fetch the related data from relationship
     // fields (like parent field) instead of just returning IDs
     depth: 1,
