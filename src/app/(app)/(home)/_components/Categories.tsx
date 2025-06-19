@@ -11,11 +11,18 @@ interface Props {
   data: CustomCategory[];
 }
 
+// Responsive category navigation that automatically hides categories that don't fit
+// and shows a "View All" button when screen space is limited
 function Categories({ data }: Props): ReactElement {
+  // Refs to measure DOM elements for width calculations
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
+
+  // How many categories can fit in available space
   const [visibleCount, setVisibleCount] = useState<number>(data.length);
+
+  // Track if user is hovering over navigation area (affects active state display)
   const [isAnyHovered, setIsAnyHovered] = useState<boolean>(false);
 
   // Use first category as active or empty string if no data
@@ -23,59 +30,64 @@ function Categories({ data }: Props): ReactElement {
   const activeCategoryIndex = data.findIndex(
     (category) => category.slug === activeCategory
   );
+
+  // Show "View All" as active if the current active category is hidden
   const isActiveCategoryHidden =
     activeCategoryIndex >= visibleCount && activeCategoryIndex !== -1;
 
   useEffect(() => {
+    // Calculate how many categories can fit in the available width
     const calculateVisible = () => {
       if (!containerRef.current || !measureRef.current || !viewAllRef.current)
         return;
 
-      // Get the width of the container
-      const containerWidth = containerRef.current.offsetWidth;
-      const viewAllWidth = viewAllRef.current.offsetWidth;
-      const availableWidth = containerWidth - viewAllWidth;
-      const items = Array.from(measureRef.current.children);
-      let totalWidth = 0;
-      let visible = 0;
+      // Get available space: total width minus "View All" button width
+      const containerWidth = containerRef.current.offsetWidth; // How wide is the entire navigation container
+      const viewAllWidth = viewAllRef.current.offsetWidth; // How wide is the "View All" button
+      const availableWidth = containerWidth - viewAllWidth; // Space left for category buttons
 
+      // Get all invisible category elements to measure their widths
+      const items = Array.from(measureRef.current.children); // Convert DOM children to array for looping
+      let totalWidth = 0; // Track cumulative width of visible categories
+      let visible = 0; // Count how many categories we can show
+
+      // Loop through categories and see how many fit
       for (const item of items) {
         const itemWidth = item.getBoundingClientRect().width;
         // Add gap width (16px) for all items except the first one
         const gapWidth = visible > 0 ? 16 : 0;
         const requiredWidth = itemWidth + gapWidth;
 
-        // Check if adding this item would exceed available width
+        // If adding this category would overflow, stop here
         if (totalWidth + requiredWidth > availableWidth) {
           break;
         }
 
-        totalWidth += requiredWidth;
-        visible++;
+        // This category fits! Add it to our running totals
+        totalWidth += requiredWidth; // Keep track of total width used
+        visible++; // Count this as a visible category
       }
 
+      // Update how many categories to show
       setVisibleCount(visible);
     };
 
-    // Calculate immediately and on resize
+    // Calculate immediately and whenever window resizes
     setTimeout(calculateVisible, 0);
 
-    // Reports changes to the dimensions of an Element's content
+    // Watch for container size changes and recalculate
     const resizeObserver = new ResizeObserver(calculateVisible);
-    // Initiates the observing of a specified Element
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
 
-    // Cleanup: unobserve all observed Element targets
+    // Cleanup: stop watching for size changes
     return () => resizeObserver.disconnect();
   }, [data]);
 
   return (
-    <div className="relative w-full overflow-hidden">
-      {" "}
-      {/* Add overflow-hidden */}
-      {/* Hidden div to measure all items - must match visible container styling */}
+    <div className="relative w-full overflow-hidden py-2 px-1">
+      {/* Hidden copy of ALL categories - used only to measure their widths */}
       <div
         ref={measureRef}
         className="absolute opacity-0 pointer-events-none flex gap-4 whitespace-nowrap"
@@ -84,7 +96,7 @@ function Categories({ data }: Props): ReactElement {
           top: 0,
           left: 0,
           zIndex: -1,
-          width: "max-content", // Prevent width calculation interference
+          width: "max-content",
         }}
       >
         {data.map((category) => (
@@ -97,23 +109,26 @@ function Categories({ data }: Props): ReactElement {
           </div>
         ))}
       </div>
-      {/* Visible items */}
+
+      {/* Visible categories - only show what fits + "View All" button */}
       <div
         ref={containerRef}
-        className="flex items-center flex-nowrap gap-4 overflow-hidden"
-        onMouseEnter={() => setIsAnyHovered(true)}
-        onMouseLeave={() => setIsAnyHovered(false)}
+        className="flex items-center flex-nowrap gap-4 "
+        onMouseEnter={() => setIsAnyHovered(true)} // Track when user hovers navigation
+        onMouseLeave={() => setIsAnyHovered(false)} // Track when user leaves navigation
       >
+        {/* Show only the categories that fit in available space */}
         {data.slice(0, visibleCount).map((category) => (
           <div key={category.id}>
             <CategoryDropdown
               category={category}
               isActive={activeCategory === category.slug}
-              isNavigationHovered={isAnyHovered}
+              isNavigationHovered={isAnyHovered} // Tell each category if navigation is hovered
             />
           </div>
         ))}
 
+        {/* "View All" button - always visible, highlighted when active category is hidden */}
         <div ref={viewAllRef}>
           <Button
             variant="elevated"
@@ -123,6 +138,7 @@ function Categories({ data }: Props): ReactElement {
             }}
             className={cn(
               "h-11 px-4 bg-transparent rounded-full hover:bg-white hover:border-2 hover:border-black text-black",
+              // Highlight "View All" when the active category is hidden behind it
               isActiveCategoryHidden &&
                 !isAnyHovered &&
                 "bg-white border-2 border-black"
