@@ -6,6 +6,7 @@ import { CustomCategory } from "../_types/CategoryType";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
+import CategoriesSidebar from "./CategoriesSidebar";
 
 interface Props {
   data: CustomCategory[];
@@ -24,6 +25,9 @@ function Categories({ data }: Props): ReactElement {
 
   // Track if user is hovering over navigation area (affects active state display)
   const [isAnyHovered, setIsAnyHovered] = useState<boolean>(false);
+
+  // If true: Render the category side bar
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   // Use first category as active or empty string if no data
   const activeCategory = data[0]?.slug || "";
@@ -87,6 +91,12 @@ function Categories({ data }: Props): ReactElement {
 
   return (
     <div className="relative w-full overflow-hidden py-2 px-1">
+      {/* Categories Side Bar */}
+      <CategoriesSidebar
+        data={data}
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+      />
       {/* Hidden copy of ALL categories - used only to measure their widths */}
       <div
         ref={measureRef}
@@ -134,7 +144,7 @@ function Categories({ data }: Props): ReactElement {
             variant="elevated"
             onClick={() => {
               // TODO: Implement view all functionality
-              console.log("View All clicked");
+              setIsSidebarOpen(true);
             }}
             className={cn(
               "h-11 px-4 bg-transparent rounded-full hover:bg-white hover:border-2 hover:border-black text-black",
