@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CustomCategory } from "../_types/CategoryType";

@@ -9,7 +9,7 @@ interface Props {
 function SearchFilters({ data }: Props): ReactElement {
   return (
     <div className="flex flex-col gap-4 w-full py-8 px-4 lg:px-12 border-b">
-      <SearchInput />
+      <SearchInput data={data} />
       <div className="hidden lg:block">
         <Categories data={data} />
       </div>
