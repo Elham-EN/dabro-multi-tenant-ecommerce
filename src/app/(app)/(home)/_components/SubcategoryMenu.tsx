@@ -45,7 +45,9 @@ export default function SubcategoryMenu({
               className="w-full text-left p-4 flex justify-between items-center
               hover:bg-black hover:text-white font-medium"
             >
-              {subCategory.name}
+              <Link href={`/${category.slug}/${subCategory.slug}`}>
+                {subCategory.name}
+              </Link>
             </Link>
           ))}
         </div>

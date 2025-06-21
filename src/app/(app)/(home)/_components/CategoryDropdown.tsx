@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import useDropdownPosition from "../_hooks/useDropdownPosition";
 import SubcategoryMenu from "./SubcategoryMenu";
 import { CustomCategory } from "../_types/CategoryType";
+import Link from "next/link";
 
 interface Props {
   category: CustomCategory;
@@ -51,7 +52,9 @@ function CategoryDropdown({
               "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[4px] -translate-y-[4px]"
           )}
         >
-          {category.name}
+          <Link href={`/${category.slug === "all" ? "" : category.slug}`}>
+            {category.name}
+          </Link>
         </Button>
         {category.subcategories &&
           (category.subcategories as CustomCategory[]).length > 0 && (
