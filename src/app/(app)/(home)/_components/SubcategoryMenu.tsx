@@ -41,13 +41,11 @@ export default function SubcategoryMenu({
           {category.subcategories.map((subCategory) => (
             <Link
               key={subCategory.slug}
-              href={"/"}
+              href={`/${category.slug}/${subCategory.slug}`}
               className="w-full text-left p-4 flex justify-between items-center
               hover:bg-black hover:text-white font-medium"
             >
-              <Link href={`/${category.slug}/${subCategory.slug}`}>
-                {subCategory.name}
-              </Link>
+              {subCategory.name}
             </Link>
           ))}
         </div>
