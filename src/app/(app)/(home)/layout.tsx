@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import type { Metadata } from "next";
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 import { Category } from "@/payload-types";
@@ -6,6 +7,11 @@ import Navbar from "./_components/Navbar";
 import Footer from "./_components/Footer";
 import SearchFilters from "./_components/SearchFilters";
 import { CustomCategory } from "./_types/CategoryType";
+
+export const metadata: Metadata = {
+  title: "Dabro | Home",
+  description: "Dabro's homepage",
+};
 
 interface LayoutProps {
   children: React.ReactNode;

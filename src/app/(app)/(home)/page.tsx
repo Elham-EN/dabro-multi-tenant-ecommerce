@@ -1,15 +1,22 @@
+"use client";
+
 import React from "react";
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Dabro | Home",
-  description: "Dabro's homepage",
-};
+// import { getQueryClient, trpc } from "@/lib/trpc/server";
+import { useTRPC } from "@/lib/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-export default async function Home(): Promise<React.ReactElement> {
+export default function Home(): React.ReactElement {
+  // const queryClient = getQueryClient();
+  // const categories = await queryClient.fetchQuery(
+  //   trpc.categories.getMany.queryOptions()
+  // );
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
+
   return (
     <div className="flex flex-col justify-center items-center p-10 gap-y-8">
-      Home page
+      <p className="text-2xl">{JSON.stringify(data, null, 2)}</p>
     </div>
   );
 }
