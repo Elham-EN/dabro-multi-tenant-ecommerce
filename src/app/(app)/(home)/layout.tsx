@@ -1,12 +1,10 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, Suspense } from "react";
 import type { Metadata } from "next";
-import configPromise from "@payload-config";
-import { getPayload } from "payload";
-import { Category } from "@/payload-types";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getQueryClient, trpc } from "@/lib/trpc/server";
 import Navbar from "./_components/Navbar";
 import Footer from "./_components/Footer";
 import SearchFilters from "./_components/SearchFilters";
-import { CustomCategory } from "./_types/CategoryType";
 
 export const metadata: Metadata = {
   title: "Dabro | Home",
@@ -18,40 +16,17 @@ interface LayoutProps {
 }
 
 async function Layout({ children }: LayoutProps): Promise<ReactElement> {
-  const payload = await getPayload({
-    config: configPromise,
-  });
-
-  const data = await payload.find({
-    collection: "categories",
-    sort: "name",
-    // Automatically populate/fetch the related data from relationship
-    // fields (like parent field) instead of just returning IDs
-    depth: 1,
-    pagination: false,
-    // Give me all categories that are parents themselves, not children of
-    // other categories. Looking for categories that don't have a parent
-    where: {
-      parent: {
-        exists: false,
-      },
-    },
-  });
-
-  // Removes the nested .docs - Instead of category.subcategories.docs[0],
-  // just use category.subcategories[0]
-  const formatedData: CustomCategory[] = data.docs.map((doc) => ({
-    ...doc,
-    subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
-      ...(doc as Category),
-      subcategories: undefined,
-    })),
-  }));
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(trpc.categories.getMany.queryOptions());
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <SearchFilters data={formatedData} />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SearchFilters />
+        </Suspense>
+      </HydrationBoundary>
       <div className="flex-1 bg-[#f4f4f0]">{children}</div>
       <Footer />
     </div>

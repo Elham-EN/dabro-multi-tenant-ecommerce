@@ -92,11 +92,7 @@ function Categories({ data }: Props): ReactElement {
   return (
     <div className="relative w-full overflow-hidden py-2 px-1">
       {/* Categories Side Bar */}
-      <CategoriesSidebar
-        data={data}
-        open={isSidebarOpen}
-        onOpenChange={setIsSidebarOpen}
-      />
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
       {/* Hidden copy of ALL categories - used only to measure their widths */}
       <div
         ref={measureRef}

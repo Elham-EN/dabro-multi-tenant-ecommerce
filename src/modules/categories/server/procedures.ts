@@ -17,6 +17,7 @@
  */
 
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
+import { Category } from "@/payload-types";
 // Import validation schemas when you add them:
 // import { z } from "zod";
 
@@ -44,33 +45,35 @@ export const categoriesRouter = createTRPCRouter({
    * 3. Return value is automatically serialized and sent to client
    * 4. Client gets full TypeScript types for the return value
    */
-  getMany: baseProcedure
-    // Add input validation here when needed:
-    // .input(z.object({
-    //   limit: z.number().min(1).max(100).default(10),
-    //   offset: z.number().min(0).default(0),
-    //   search: z.string().optional(),
-    // }))
-    .query(async () => {
-      // Access the context created in init.ts
+  getMany: baseProcedure.query(async ({ ctx }) => {
+    const data = await ctx.payload.find({
+      collection: "categories",
+      sort: "name",
+      // Automatically populate/fetch the related data from relationship
+      // fields (like parent field) instead of just returning IDs
+      depth: 1,
+      pagination: false,
+      // Give me all categories that are parents themselves, not children of
+      // other categories. Looking for categories that don't have a parent
+      where: {
+        parent: {
+          exists: false,
+        },
+      },
+    });
 
-      // Access input when you add validation:
-      // const { input } = opts;
-      // console.log("Query params:", input.limit, input.offset);
+    // Removes the nested .docs - Instead of category.subcategories.docs[0],
+    // just use category.subcategories[0]
+    const formatedData = data.docs.map((doc) => ({
+      ...doc,
+      subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
+        ...(doc as Category),
+        subcategories: undefined,
+      })),
+    }));
 
-      // TODO: Replace with real database query
-      // Example with Prisma:
-      // return await prisma.category.findMany({
-      //   take: input.limit,
-      //   skip: input.offset,
-      //   where: input.search ? {
-      //     name: { contains: input.search, mode: 'insensitive' }
-      //   } : undefined,
-      // });
-
-      // Mock data for now - this matches your original return
-      return [{ hello: "tRPC world" }];
-    }),
+    return formatedData;
+  }),
 
   // TODO: Add more procedures as your app grows
 
@@ -100,34 +103,6 @@ export const categoriesRouter = createTRPCRouter({
   //         slug: input.slug,
   //         createdBy: ctx.userId,
   //       },
-  //     });
-  //   }),
-
-  /**
-   * Example: UPDATE CATEGORY
-   */
-  // update: baseProcedure
-  //   .input(z.object({
-  //     id: z.number(),
-  //     name: z.string().min(1).max(100).optional(),
-  //     slug: z.string().min(1).max(100).optional(),
-  //   }))
-  //   .mutation(async ({ input, ctx }) => {
-  //     const { id, ...updateData } = input;
-  //     return await prisma.category.update({
-  //       where: { id },
-  //       data: updateData,
-  //     });
-  //   }),
-
-  /**
-   * Example: DELETE CATEGORY
-   */
-  // delete: baseProcedure
-  //   .input(z.object({ id: z.number() }))
-  //   .mutation(async ({ input, ctx }) => {
-  //     return await prisma.category.delete({
-  //       where: { id: input.id },
   //     });
   //   }),
 });
@@ -162,7 +137,7 @@ export const categoriesRouter = createTRPCRouter({
  *
  * 6. RETURN TYPES:
  *    TypeScript automatically infers return types:
- *    // Frontend knows this returns { id: number, name: string }[]
+ *    Frontend knows this returns { id: number, name: string }[]
  *    return await prisma.category.findMany();
  *
  * 7. INFINITE QUERIES:
@@ -183,10 +158,10 @@ export const categoriesRouter = createTRPCRouter({
  * 8. FRONTEND INTEGRATION:
  *    Once you add these procedures, use them like:
  *
- *    // In client components:
+ *    In client components:
  *    const { data } = useQuery(trpc.categories.getMany.queryOptions());
  *    const createMutation = useMutation(trpc.categories.create);
  *
- *    // In server components:
+ *    In server components:
  *    void queryClient.prefetchQuery(trpc.categories.getMany.queryOptions());
  */

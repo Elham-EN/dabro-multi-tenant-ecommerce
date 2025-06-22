@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTRPC } from "@/lib/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { CustomCategory } from "../_types/CategoryType";
 import {
   Sheet,
@@ -15,7 +17,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data: CustomCategory[];
 }
 
 // Sidebar that shows category hierarchy - allows drilling down into subcategories
@@ -23,8 +24,10 @@ interface Props {
 export default function CategoriesSidebar({
   open,
   onOpenChange,
-  data,
 }: Props): React.ReactElement {
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
+
   // Track which subcategories we're currently viewing (null = root level)
   const [parentCategories, setParentCategories] = useState<
     CustomCategory[] | null
