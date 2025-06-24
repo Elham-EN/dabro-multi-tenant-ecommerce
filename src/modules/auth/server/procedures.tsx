@@ -1,6 +1,7 @@
-import { headers as getHeaders } from "next/headers";
+import { headers as getHeaders, cookies as getCookies } from "next/headers";
 import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
+import { TRPCError } from "@trpc/server";
 
 export const authRouter = createTRPCRouter({
   // Get the current session
@@ -41,5 +42,65 @@ export const authRouter = createTRPCRouter({
           username: input.username,
         },
       });
+      const data = await ctx.payload.login({
+        collection: "users",
+        data: {
+          email: input.email,
+          password: input.password,
+        },
+      });
+      if (!data.token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Failed to authenticate",
+        });
+      }
+      // If have token, then set cookie
+      const cookies = await getCookies();
+      cookies.set({
+        name: "AUTH_COOKIE",
+        value: data.token,
+        httpOnly: true,
+        path: "/",
+        // TODO: Ensure cross-domain cookie sharing
+      });
     }),
+
+  login: baseProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const data = await ctx.payload.login({
+        collection: "users",
+        data: {
+          email: input.email,
+          password: input.password,
+        },
+      });
+      if (!data.token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Failed to authenticate",
+        });
+      }
+      // If have token, then set cookie
+      const cookies = await getCookies();
+      cookies.set({
+        name: "AUTH_COOKIE",
+        value: data.token,
+        httpOnly: true,
+        path: "/",
+        // TODO: Ensure cross-domain cookie sharing
+      });
+
+      return data;
+    }),
+  logout: baseProcedure.mutation(async () => {
+    const cookies = await getCookies();
+    cookies.delete("AUTH_COOKIE");
+  }),
 });
