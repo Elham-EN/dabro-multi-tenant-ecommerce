@@ -2,6 +2,7 @@ import { headers as getHeaders, cookies as getCookies } from "next/headers";
 import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
 import { TRPCError } from "@trpc/server";
+import { registerSchema } from "../schema";
 
 export const authRouter = createTRPCRouter({
   // Get the current session
@@ -13,25 +14,7 @@ export const authRouter = createTRPCRouter({
     return session;
   }),
   register: baseProcedure
-    .input(
-      z.object({
-        email: z.string().email(),
-        password: z.string(),
-        username: z
-          .string()
-          .min(3, "Username must be at least 3 characters")
-          .max(63, "Username must be less than 63 characters")
-          .regex(
-            /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
-            "Username can only contain lowercase lettwes, numbers and hypens. It ends with a letter or number"
-          )
-          .refine(
-            (val) => !val.includes("---"),
-            "Username cannot contain consecutive hypens"
-          )
-          .transform((val) => val.toLowerCase()),
-      })
-    )
+    .input(registerSchema)
     .mutation(async ({ input, ctx }) => {
       await ctx.payload.create({
         collection: "users",

@@ -72,20 +72,22 @@ export default function Navbar(): React.ReactElement {
         ))}
       </div>
       <div className="hidden lg:flex h-full">
-        <Button
-          variant={"secondary"}
-          className="border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
+        <Link
+          href={"/sign-in"}
+          className="flex items-center justify-center border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
           rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
         >
-          <Link href={"/sign-in"}> Log in</Link>
-        </Button>
-        <Button
+          Log in
+        </Link>
+
+        <Link
+          href={"/sign-up"}
           className="border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
           rounded-none bg-black text-white hover:bg-pink-400 hover:text-black
-          transition-colors text-lg"
+          transition-colors text-lg flex items-center justify-center"
         >
-          <Link href={"/sign-up"}>Start selling</Link>
-        </Button>
+          Start selling
+        </Link>
       </div>
       <div className="flex lg:hidden">
         <Button
