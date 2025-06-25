@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { useForm } from "react-hook-form";
@@ -20,6 +21,9 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTRPC } from "@/lib/trpc/client";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -28,6 +32,11 @@ const poppins = Poppins({
 
 export default function SignUpView() {
   const [showPasssword, setShowPassword] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  const trpc = useTRPC();
+  const register = useMutation(trpc.auth.register.mutationOptions());
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -45,9 +54,23 @@ export default function SignUpView() {
   const passwordValue = form.getValues("password");
 
   const onSubmit = (values: z.infer<typeof registerSchema>): void => {
-    console.log("====================================");
-    console.log(values);
-    console.log("====================================");
+    register.mutate(
+      {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          router.push("/");
+          toast.success("You have successfully registered");
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      }
+    );
   };
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -145,12 +168,13 @@ export default function SignUpView() {
               )}
             />
             <Button
+              disabled={register.isPending}
               type="submit"
               size={"lg"}
               variant={"elevated"}
               className="mt-8 bg-black text-white hover:bg-pink-400 hover:text-primary"
             >
-              Submit
+              {register.isPending ? "Submitting..." : "Submit"}
             </Button>
           </form>
         </Form>
