@@ -50,8 +50,8 @@ export default function SignUpView() {
   });
 
   const username = form.watch("username");
-  const usernameErrors = form.formState.errors.username;
-  const showPreview: boolean = username && !usernameErrors;
+  //const usernameErrors = form.formState.errors.username;
+  //const showPreview: boolean = username && !usernameErrors;
   const passwordValue = form.getValues("password");
 
   const onSubmit = (values: z.infer<typeof registerSchema>): void => {

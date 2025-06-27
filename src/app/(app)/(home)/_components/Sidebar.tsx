@@ -7,6 +7,9 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { useTRPC } from "@/lib/trpc/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
 
 interface NavbarItem {
   href: string;
@@ -24,6 +27,19 @@ export default function Sidebar({
   open,
   onOpenChange,
 }: SidebarProps): React.ReactElement {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const logout = useMutation(trpc.auth.logout.mutationOptions());
+  const session = useQuery(trpc.auth.session.queryOptions());
+  const handleLogout = () => {
+    logout.mutate(void {}, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
+        redirect("/sign-in");
+      },
+    });
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="p-0 transition-none">
@@ -43,22 +59,44 @@ export default function Sidebar({
               {item.children}
             </Link>
           ))}
-          <div className="border-t">
-            <Link
-              href={"/sign-in"}
-              className="w-full flex items-center text-base font-medium text-left p-4 
+          {session.data?.user ? (
+            <div className="border-t">
+              <Link
+                href={"/admin"}
+                className="w-full flex items-center text-base font-medium text-left p-4 
               hover:bg-black hover:text-white"
-            >
-              Log In
-            </Link>
-            <Link
-              href={"/sign-up"}
-              className="w-full flex items-center text-base font-medium text-left p-4 
+              >
+                Dashboard
+              </Link>
+              <Link
+                href={"#"}
+                onClick={handleLogout}
+                className="w-full flex items-center text-base font-medium text-left p-4 
               hover:bg-black hover:text-white"
-            >
-              Start Selling
-            </Link>
-          </div>
+              >
+                Log out
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="border-t">
+                <Link
+                  href={"/sign-in"}
+                  className="w-full flex items-center text-base font-medium text-left p-4 
+              hover:bg-black hover:text-white"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href={"/sign-up"}
+                  className="w-full flex items-center text-base font-medium text-left p-4 
+              hover:bg-black hover:text-white"
+                >
+                  Start Selling
+                </Link>
+              </div>
+            </>
+          )}
         </ScrollArea>
       </SheetContent>
     </Sheet>

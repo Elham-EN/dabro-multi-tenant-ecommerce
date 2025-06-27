@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Sidebar from "./Sidebar";
 import { MenuIcon } from "lucide-react";
+import { useTRPC } from "@/lib/trpc/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -48,8 +50,22 @@ const navbarItems = [
 ];
 
 export default function Navbar(): React.ReactElement {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const logout = useMutation(trpc.auth.logout.mutationOptions());
+  const session = useQuery(trpc.auth.session.queryOptions());
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+  const handleLogout = () => {
+    logout.mutate(void {}, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
+        redirect("/sign-in");
+      },
+    });
+  };
+
   return (
     <nav
       className="h-20 border-b flex justify-between items-center 
@@ -71,24 +87,45 @@ export default function Navbar(): React.ReactElement {
           </NavbarItem>
         ))}
       </div>
-      <div className="hidden lg:flex h-full">
-        <Link
-          href={"/sign-in"}
-          className="flex items-center justify-center border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
-          rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
-        >
-          Log in
-        </Link>
-
-        <Link
-          href={"/sign-up"}
-          className="border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
+      {session.data?.user ? (
+        <div className="hidden lg:flex h-full">
+          <Link
+            href={"/admin"}
+            className="border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
           rounded-none bg-black text-white hover:bg-pink-400 hover:text-black
           transition-colors text-lg flex items-center justify-center"
-        >
-          Start selling
-        </Link>
-      </div>
+          >
+            Dashboard
+          </Link>
+          <Button
+            onClick={handleLogout}
+            variant={"ghost"}
+            className="flex items-center justify-center border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
+          rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
+          >
+            Log out
+          </Button>
+        </div>
+      ) : (
+        <div className="hidden lg:flex h-full">
+          <Link
+            href={"/sign-in"}
+            className="flex items-center justify-center border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
+          rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
+          >
+            Log in
+          </Link>
+
+          <Link
+            href={"/sign-up"}
+            className="border-l border-t-0 border-r-0 border-b-0 px-12 h-full 
+          rounded-none bg-black text-white hover:bg-pink-400 hover:text-black
+          transition-colors text-lg flex items-center justify-center"
+          >
+            Start selling
+          </Link>
+        </div>
+      )}
       <div className="flex lg:hidden">
         <Button
           variant={"ghost"}
