@@ -2,6 +2,7 @@ import { headers as getHeaders, cookies as getCookies } from "next/headers";
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { loginSchema, registerSchema } from "../schema";
+import { generateAuthCookie } from "./utils";
 
 export const authRouter = createTRPCRouter({
   // Get the current session
@@ -10,9 +11,6 @@ export const authRouter = createTRPCRouter({
     const headers = await getHeaders();
     // This return the user data if user is authenticated
     const session = await ctx.payload.auth({ headers });
-    console.log("====================================");
-    console.log(`session: ${session}`);
-    console.log("====================================");
     return session;
   }),
   register: baseProcedure
@@ -81,13 +79,9 @@ export const authRouter = createTRPCRouter({
         });
       }
       // If have token, then set cookie
-      const cookies = await getCookies();
-      cookies.set({
-        name: "payload-token",
+      await generateAuthCookie({
+        prefix: ctx.payload.config.cookiePrefix,
         value: data.token,
-        httpOnly: true,
-        path: "/",
-        // TODO: Ensure cross-domain cookie sharing
       });
     }),
 
@@ -106,13 +100,9 @@ export const authRouter = createTRPCRouter({
       });
     }
     // If have token, then set cookie
-    const cookies = await getCookies();
-    cookies.set({
-      name: "payload-token",
+    await generateAuthCookie({
+      prefix: ctx.payload.config.cookiePrefix,
       value: data.token,
-      httpOnly: true,
-      path: "/",
-      // TODO: Ensure cross-domain cookie sharing
     });
 
     return data;

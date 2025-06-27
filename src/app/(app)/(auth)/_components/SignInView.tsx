@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Poppins } from "next/font/google";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,7 +22,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/lib/trpc/client";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const poppins = Poppins({
@@ -35,6 +35,7 @@ export default function SignInView() {
   const router = useRouter();
 
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const login = useMutation(trpc.auth.login.mutationOptions());
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -53,8 +54,9 @@ export default function SignInView() {
         password: values.password,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           form.reset();
+          await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
           router.push("/");
           toast.success("You have successfully registered");
         },

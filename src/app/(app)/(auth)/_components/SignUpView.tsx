@@ -22,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/lib/trpc/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const poppins = Poppins({
@@ -36,6 +36,7 @@ export default function SignUpView() {
   const router = useRouter();
 
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const register = useMutation(trpc.auth.register.mutationOptions());
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -61,8 +62,9 @@ export default function SignUpView() {
         password: values.password,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           form.reset();
+          await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
           router.push("/");
           toast.success("You have successfully registered");
         },
