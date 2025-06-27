@@ -1,47 +1,46 @@
-# Multi-Tenant E-Commerce Platform
+# Multi-Tenant E-Commerce Platform - Dabro
 
 A comprehensive multi-tenant e-commerce platform where creators can build their own storefronts, sell digital products, and get paid through Stripe Connect. This platform handles everything from vendor subdomains to automatic platform fees, making it a complete solution for digital marketplaces.
 
 ## 🚀 Project Overview
 
-This is a real-world multi-tenant e-commerce application that enables creators to have their own branded storefronts, sell digital products, and manage their business through dedicated dashboards. The platform automatically handles payments, fees, and content delivery while providing a seamless experience for both vendors and customers.
+**Dabro** is a real-world multi-tenant e-commerce application that enables creators to have their own branded storefronts, sell digital products, and manage their business through dedicated dashboards. The platform automatically handles payments, fees, and content delivery while providing a seamless experience for both vendors and customers.
 
-## ✨ Key Features
+## ✨ Current Features (Implemented)
 
-### 🏬 **Multi-Tenant Architecture**
-- Complete tenant isolation with custom subdomains
-- Independent vendor storefronts with custom branding
+### 🔐 **Authentication System**
+- Complete user registration and login flow
+- Session management with HTTP-only cookies
+- Input validation with Zod schemas
+- Role-based access control foundation
+- Secure password hashing via Payload CMS
+
+### 🏷️ **Smart Category Management**
+- Hierarchical category system (parent-child relationships)
+- Responsive category navigation that adapts to screen size
+- Auto-hiding categories with "View All" functionality
+- Dynamic category dropdowns with smart positioning
+- Real-time category filtering and search
+
+### 🎨 **Advanced UI/UX**
+- Responsive navbar with mobile-first design
+- Smart sidebar navigation for mobile devices
+- Dynamic category display based on available screen space
+- Modern design with TailwindCSS V4 and ShadcnUI
+- Comprehensive form handling with React Hook Form
+
+### 🛠️ **Technical Excellence**
+- Full-stack TypeScript with end-to-end type safety
+- tRPC for type-safe API calls with automatic validation
+- Payload CMS integration for content management
+- Comprehensive testing setup (Jest + React Testing Library)
+- Server and client component separation
+
+### 📱 **Multi-Tenant Architecture Foundation**
+- Route group structure ready for tenant isolation
+- Payload CMS collections designed for multi-tenancy
 - Scalable architecture supporting unlimited merchants
-
-### 🌐 **Vendor Management**
-- Custom merchant subdomains (e.g., `vendor.platform.com`)
-- Personalized storefronts with custom themes
-- Merchant dashboard for product and order management
-
-### 💳 **Payment & Financial Features**
-- Stripe Connect integration for seamless payments
-- Automatic platform fee collection
-- Direct payouts to merchant accounts
-- Comprehensive transaction tracking
-
-### 📱 **User Experience**
-- Product ratings and reviews system
-- Personal purchase library for customers
-- Advanced search and filtering capabilities
-- Image upload and media management
-
-### 🛠️ **Administration & Control**
-- Role-based access control (RBAC)
-- Comprehensive admin dashboard
-- Merchant performance analytics
-- Content moderation tools
-
-### 🎨 **Technical Excellence**
-- Built with Next.js 15 and App Router
-- TailwindCSS V4 for modern styling
-- ShadcnUI component library
-- TypeScript for type safety
-- Payload CMS for content management
+- Custom subdomain preparation in Next.js config
 
 ## 🛠️ Tech Stack
 
@@ -50,8 +49,10 @@ This is a real-world multi-tenant e-commerce application that enables creators t
 - **Styling**: TailwindCSS V4
 - **UI Components**: ShadcnUI + Radix UI
 - **Icons**: Lucide React
-- **CMS**: Payload CMS (to be integrated)
-- **Payments**: Stripe Connect (to be integrated)
+- **CMS**: Payload CMS 3.42
+- **Database**: MongoDB with Mongoose
+- **API**: tRPC + TanStack Query
+- **Authentication**: Payload CMS Auth
 - **Testing**: Jest + React Testing Library
 - **Code Quality**: ESLint + TypeScript
 
@@ -60,23 +61,43 @@ This is a real-world multi-tenant e-commerce application that enables creators t
 ```
 multi-tenant-ecommerce/
 ├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── layout.tsx         # Root layout
-│   │   ├── page.tsx          # Home page
-│   │   └── globals.css       # Global styles
-│   ├── components/            # Reusable React components
-│   │   └── ui/               # ShadcnUI components
-│   │       ├── button.tsx
-│   │       ├── input.tsx
-│   │       ├── progress.tsx
-│   │       └── textarea.tsx
-│   └── lib/                  # Utility functions
-│       └── utils.ts
-├── public/                   # Static assets
-├── tests/                    # Test configurations
-│   ├── jest.config.ts       # Client component tests
-│   └── jest.server.config.ts # Server component tests
-└── package.json
+│   ├── app/                          # Next.js App Router
+│   │   ├── (app)/                    # Main application group
+│   │   │   ├── (home)/              # Home pages with navigation
+│   │   │   │   ├── _components/     # Home-specific components
+│   │   │   │   ├── _hooks/          # Custom hooks
+│   │   │   │   ├── _types/          # TypeScript definitions
+│   │   │   │   └── layout.tsx       # Home layout with navbar
+│   │   │   ├── (auth)/              # Authentication pages
+│   │   │   │   ├── sign-in/         # Login page
+│   │   │   │   └── sign-up/         # Registration page
+│   │   │   └── layout.tsx           # App layout
+│   │   ├── (payload)/               # Payload CMS admin
+│   │   │   └── admin/               # CMS admin interface
+│   │   └── api/                     # API routes
+│   │       └── trpc/                # tRPC endpoint
+│   ├── collections/                 # Payload CMS collections
+│   │   ├── Users.ts                 # User collection
+│   │   ├── Categories.ts            # Category collection
+│   │   └── Media.ts                 # Media collection
+│   ├── modules/                     # Feature modules
+│   │   ├── auth/                    # Authentication module
+│   │   │   ├── schema.ts            # Zod validation schemas
+│   │   │   └── server/              # Server-side procedures
+│   │   └── categories/              # Categories module
+│   │       └── server/              # Category procedures
+│   ├── lib/                         # Utility libraries
+│   │   ├── trpc/                    # tRPC configuration
+│   │   │   ├── client.tsx           # Client-side setup
+│   │   │   ├── server.tsx           # Server-side setup
+│   │   │   ├── init.ts              # tRPC initialization
+│   │   │   └── routers/             # API routers
+│   │   └── utils.ts                 # Utility functions
+│   ├── components/                  # Reusable components
+│   │   └── ui/                      # ShadcnUI components
+│   └── __tests__/                   # Test files
+├── public/                          # Static assets
+└── package.json                     # Dependencies and scripts
 ```
 
 ## 🚦 Getting Started
@@ -84,9 +105,10 @@ multi-tenant-ecommerce/
 ### Prerequisites
 
 - Node.js 18+ installed
+- MongoDB database (local or cloud)
 - npm, yarn, pnpm, or bun package manager
 
-### Installation
+### Environment Setup
 
 1. **Clone the repository**
    ```bash
@@ -103,7 +125,14 @@ multi-tenant-ecommerce/
    pnpm install
    ```
 
-3. **Run the development server**
+3. **Environment variables**
+   Create a `.env` file in the root directory:
+   ```env
+   DATABASE_URI=mongodb://localhost:27017/dabro-ecommerce
+   PAYLOAD_SECRET=your-super-secret-key-here
+   ```
+
+4. **Run the development server**
    ```bash
    npm run dev
    # or
@@ -112,89 +141,136 @@ multi-tenant-ecommerce/
    pnpm dev
    ```
 
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+5. **Access the application**
+   - Frontend: [http://localhost:3000](http://localhost:3000)
+   - Payload CMS Admin: [http://localhost:3000/admin](http://localhost:3000/admin)
 
 ## 🧪 Testing
 
-This project includes comprehensive testing setup with Jest and React Testing Library.
+Comprehensive testing setup with separate configurations for client and server components.
 
-### Run Tests
+### Available Test Commands
 
 ```bash
 # Run all tests
 npm test
 
-# Run client component tests
+# Run client component tests (jsdom environment)
 npm run test:client
 
-# Run server component tests
+# Run server component tests (node environment)
 npm run test:server
 
-# Run tests with coverage
-npm run test:coverage
+# Run both client and server tests
+npm run test:all
 
 # Run tests in watch mode
 npm run test:watch
 ```
 
-### Test Structure
+### Test Coverage
 
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test component interactions
-- **Server Component Tests**: Test async server components with Node.js environment
-- **Client Component Tests**: Test interactive components with jsdom environment
+- **Component Testing**: UI components with user interactions
+- **Integration Testing**: Component communication and data flow
+- **Server Component Testing**: Async components and server logic
+- **API Testing**: tRPC procedures and validation
 
-## 🔧 Development
+## 🔧 Development Workflow
 
-### Adding New Components
+### Adding New Features
 
-1. Create component in `src/components/`
-2. Add corresponding test file with `.test.tsx` extension
-3. Export from appropriate index files
-4. Update Storybook stories if using Storybook
+1. **Create tRPC Procedures**
+   ```typescript
+   // src/modules/[feature]/server/procedures.ts
+   export const featureRouter = createTRPCRouter({
+     getData: baseProcedure.query(async ({ ctx }) => {
+       return await ctx.payload.find({ collection: "your-collection" });
+     }),
+   });
+   ```
 
-### Code Quality
+2. **Add to Main Router**
+   ```typescript
+   // src/lib/trpc/routers/_app.ts
+   export const appRouter = createTRPCRouter({
+     feature: featureRouter,
+   });
+   ```
 
-The project enforces code quality through:
-- **TypeScript** for type safety
-- **ESLint** for code linting
-- **Jest** for testing
-- **Prettier** for code formatting (to be configured)
+3. **Use in Components**
+   ```typescript
+   const { data } = useQuery(trpc.feature.getData.queryOptions());
+   ```
 
-## 🚀 Planned Features
+### Code Quality Standards
 
-### Phase 1: Core Infrastructure
-- [ ] Payload CMS integration
-- [ ] Database setup and models
-- [ ] Authentication system
-- [ ] Basic multi-tenant routing
+- **TypeScript**: Strict mode enabled with comprehensive type checking
+- **ESLint**: Enforced code style and best practices
+- **Testing**: All features must have corresponding tests
+- **Documentation**: Code comments for complex logic
 
-### Phase 2: E-Commerce Features
+## 🚀 Upcoming Features
+
+### Phase 1: Core E-Commerce (In Progress)
 - [ ] Product catalog management
 - [ ] Shopping cart functionality
-- [ ] Stripe Connect integration
+- [ ] Inventory management
 - [ ] Order processing system
 
-### Phase 3: Advanced Features
-- [ ] Subdomain routing
-- [ ] File delivery system
-- [ ] Reviews and ratings
-- [ ] Analytics dashboard
+### Phase 2: Payment Integration
+- [ ] Stripe Connect integration
+- [ ] Multi-vendor payment splitting
+- [ ] Platform fee collection
+- [ ] Payout management
 
-### Phase 4: Platform Features
-- [ ] Admin dashboard
-- [ ] Merchant onboarding
-- [ ] Revenue sharing
-- [ ] Advanced reporting
+### Phase 3: Multi-Tenancy
+- [ ] Subdomain routing system
+- [ ] Tenant-specific branding
+- [ ] Custom domain support
+- [ ] Tenant isolation
+
+### Phase 4: Advanced Features
+- [ ] File delivery system for digital products
+- [ ] Review and rating system
+- [ ] Advanced analytics dashboard
+- [ ] Email notification system
+
+### Phase 5: Platform Management
+- [ ] Comprehensive admin dashboard
+- [ ] Merchant onboarding flow
+- [ ] Revenue sharing configuration
+- [ ] Performance monitoring
+
+## 📊 Current Implementation Status
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Authentication | ✅ Complete | Registration, login, session management |
+| Category System | ✅ Complete | Hierarchical with smart UI |
+| User Management | ✅ Complete | Payload CMS integration |
+| Responsive Design | ✅ Complete | Mobile-first approach |
+| tRPC Integration | ✅ Complete | Full type safety |
+| Testing Framework | ✅ Complete | Jest + RTL setup |
+| Product Management | 🔄 Planned | Next priority |
+| Payment Processing | 🔄 Planned | Stripe Connect ready |
+| Multi-tenant Routing | 🔄 Planned | Architecture prepared |
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Run tests (`npm test`)
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Write tests for new features
+- Update documentation for significant changes
+- Use conventional commit messages
+- Ensure all tests pass before submitting PR
 
 ## 📄 License
 
@@ -203,11 +279,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [Next.js](https://nextjs.org/) for the amazing React framework
-- [Tailwind CSS](https://tailwindcss.com/) for utility-first CSS
+- [Payload CMS](https://payloadcms.com/) for the powerful headless CMS
+- [tRPC](https://trpc.io/) for end-to-end type safety
+- [TailwindCSS](https://tailwindcss.com/) for utility-first CSS
 - [ShadcnUI](https://ui.shadcn.com/) for beautiful UI components
-- [Stripe](https://stripe.com/) for payment processing
-- [Payload CMS](https://payloadcms.com/) for content management
+- [TanStack Query](https://tanstack.com/query) for data fetching
 
 ---
 
-**Note**: This project is currently in development. Features are being implemented incrementally. Check the project board for current progress and upcoming features.
+**Current Status**: 🏗️ **Active Development** - Core features implemented, moving toward full e-commerce functionality.
+
+**Latest Update**: Authentication system, smart category navigation, and comprehensive testing framework completed.
+
+For questions or support, please open an issue or start a discussion in the repository.
