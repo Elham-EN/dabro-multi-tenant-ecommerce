@@ -1,8 +1,7 @@
 import { headers as getHeaders, cookies as getCookies } from "next/headers";
-import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { registerSchema } from "../schema";
+import { loginSchema, registerSchema } from "../schema";
 
 export const authRouter = createTRPCRouter({
   // Get the current session
@@ -11,6 +10,9 @@ export const authRouter = createTRPCRouter({
     const headers = await getHeaders();
     // This return the user data if user is authenticated
     const session = await ctx.payload.auth({ headers });
+    console.log("====================================");
+    console.log(`session: ${session}`);
+    console.log("====================================");
     return session;
   }),
   register: baseProcedure
@@ -81,7 +83,7 @@ export const authRouter = createTRPCRouter({
       // If have token, then set cookie
       const cookies = await getCookies();
       cookies.set({
-        name: "AUTH_COOKIE",
+        name: "payload-token",
         value: data.token,
         httpOnly: true,
         path: "/",
@@ -89,41 +91,34 @@ export const authRouter = createTRPCRouter({
       });
     }),
 
-  login: baseProcedure
-    .input(
-      z.object({
-        email: z.string().email(),
-        password: z.string(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const data = await ctx.payload.login({
-        collection: "users",
-        data: {
-          email: input.email,
-          password: input.password,
-        },
+  login: baseProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
+    const data = await ctx.payload.login({
+      collection: "users",
+      data: {
+        email: input.email,
+        password: input.password,
+      },
+    });
+    if (!data.token) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Failed to authenticate",
       });
-      if (!data.token) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Failed to authenticate",
-        });
-      }
-      // If have token, then set cookie
-      const cookies = await getCookies();
-      cookies.set({
-        name: "AUTH_COOKIE",
-        value: data.token,
-        httpOnly: true,
-        path: "/",
-        // TODO: Ensure cross-domain cookie sharing
-      });
+    }
+    // If have token, then set cookie
+    const cookies = await getCookies();
+    cookies.set({
+      name: "payload-token",
+      value: data.token,
+      httpOnly: true,
+      path: "/",
+      // TODO: Ensure cross-domain cookie sharing
+    });
 
-      return data;
-    }),
+    return data;
+  }),
   logout: baseProcedure.mutation(async () => {
     const cookies = await getCookies();
-    cookies.delete("AUTH_COOKIE");
+    cookies.delete("payload-token");
   }),
 });
