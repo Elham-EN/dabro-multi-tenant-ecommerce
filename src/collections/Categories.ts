@@ -17,6 +17,7 @@ export const Categories: CollectionConfig = {
   // Unique, URL-friendly string that will act as an identifier
   // for this Collection.
   slug: "categories",
+  admin: { useAsTitle: "name" },
   // Array of field types that will determine the structure and
   // functionality of the data stored within this Collection.
   fields: [

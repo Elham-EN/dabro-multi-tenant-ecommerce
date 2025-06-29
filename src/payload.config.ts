@@ -10,6 +10,7 @@ import sharp from "sharp";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Categories } from "./collections/Categories";
+import { Products } from "./collections/Products";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -26,7 +27,7 @@ export default buildConfig({
     },
   },
   // An array of Collections for Payload to manage
-  collections: [Users, Media, Categories],
+  collections: [Users, Media, Categories, Products],
   // The Rich Text Editor which will be used by richText fields.
   editor: lexicalEditor(),
   // Payload will use for any encryption workflows -
