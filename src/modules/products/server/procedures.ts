@@ -6,6 +6,7 @@ export const productsRouter = createTRPCRouter({
       collection: "products",
       depth: 1, // Populate "category" & "image"
     });
+
     return data;
   }),
 });
