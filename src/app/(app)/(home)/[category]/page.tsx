@@ -8,13 +8,16 @@ interface Props {
   params: Promise<{ category: string }>;
 }
 // The Server Side Component (page.tsx):
-export default async function page({}: Props) {
+export default async function page({ params }: Props) {
+  const { category } = await params;
   const queryClient = getQueryClient();
   // Server component to prefetch products:
   // - Fetches the products data on the server
   // - Stores it in the server's query cache
   // - This happens before any HTML is sent to the browser
-  void queryClient.prefetchQuery(trpc.products.getMany.queryOptions());
+  void queryClient.prefetchQuery(
+    trpc.products.getMany.queryOptions({ category })
+  );
 
   return (
     // Uses dehydrate() to convert the query cache into a serializable
@@ -30,7 +33,7 @@ export default async function page({}: Props) {
               - Is data fresh enough? → YES (just fetched)
               - Result: Returns the data immediately, data is guaranteed 
                 to be defined */}
-        <ProductList />
+        <ProductList category={category} />
       </Suspense>
     </HydrationBoundary>
   );
