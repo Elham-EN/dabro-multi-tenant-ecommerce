@@ -1,11 +1,12 @@
 "use client";
 
 import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
+import { ListFilterIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import CategoryDropdown from "./CategoryDropdown";
 import { CustomCategory } from "../_types/CategoryType";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { ListFilterIcon } from "lucide-react";
 import CategoriesSidebar from "./CategoriesSidebar";
 
 interface Props {
@@ -29,8 +30,12 @@ function Categories({ data }: Props): ReactElement {
   // If true: Render the category side bar
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
+  const params = useParams();
+
+  const categoryParam = params.category as string | undefined;
+
   // Use first category as active or empty string if no data
-  const activeCategory = data[0]?.slug || "";
+  const activeCategory = categoryParam || "all";
   const activeCategoryIndex = data.findIndex(
     (category) => category.slug === activeCategory
   );
@@ -143,7 +148,7 @@ function Categories({ data }: Props): ReactElement {
               setIsSidebarOpen(true);
             }}
             className={cn(
-              "h-11 px-4 bg-transparent rounded-full hover:bg-white hover:border-2 hover:border-black text-black",
+              "h-11 px-4 rounded-full hover:bg-white hover:border-2 hover:border-black text-black",
               // Highlight "View All" when the active category is hidden behind it
               isActiveCategoryHidden &&
                 !isAnyHovered &&
