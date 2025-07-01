@@ -21,9 +21,9 @@ function ProductList({ category }: Props): React.ReactElement {
   );
 
   return (
-    <div>
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
       {data.docs.map((product) => (
-        <div key={product.id}>
+        <div key={product.id} className="border rounded-md bg-white p-2">
           <h1 className="text-4xl">
             Product Name: <span className="text-red-400">{product.name}</span>
           </h1>

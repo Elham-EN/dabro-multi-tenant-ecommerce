@@ -1,4 +1,5 @@
 import { getQueryClient, trpc } from "@/lib/trpc/server";
+import ProductFilters from "@/modules/products/components/ProductFilters";
 import ProductList from "@/modules/products/components/ProductList";
 import ProductListSkeleton from "@/modules/products/components/ProductListSkeleton";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -24,17 +25,29 @@ export default async function page({ params }: Props) {
     // format that can be embedded in the markup. The dehydrated state gets
     // passed to HydrationBoundary so it can be hydrated on the client
     <HydrationBoundary state={dehydrate(queryClient)}>
-      {/* The Client Side Component (ProductList.tsx):
+      <div className="px-4 lg:p-12 flex flex-col gap-4">
+        <div
+          className="grid grid-cols-1 lg:grid-cols-6 
+          xl:grid-cols-8 gap-y-6 gap-x-12"
+        >
+          <div className="lg:col-span-2 mt-2 lg:mt-0">
+            <ProductFilters />
+          </div>
+          <div className="lg:col-span-4 xl:col-span-6">
+            {/* The Client Side Component (ProductList.tsx):
           No Loading State: Because data was prefetched, you never see 
           ProductListSkeleton. The data is already there */}
-      <Suspense fallback={<ProductListSkeleton />}>
-        {/* When ProductList renders, useSuspenseQuery checks:
+            <Suspense fallback={<ProductListSkeleton />}>
+              {/* When ProductList renders, useSuspenseQuery checks:
               - Is data already in cache? → YES (from server prefetch)
               - Is data fresh enough? → YES (just fetched)
               - Result: Returns the data immediately, data is guaranteed 
                 to be defined */}
-        <ProductList category={category} />
-      </Suspense>
+              <ProductList category={category} />
+            </Suspense>
+          </div>
+        </div>
+      </div>
     </HydrationBoundary>
   );
 }
