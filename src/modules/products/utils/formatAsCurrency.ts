@@ -1,4 +1,4 @@
-export function formatAsCurrency(value: string) {
+export function formatAsCurrency(value: string): string {
   const numericValue = value.replace(/[^0-9]/g, "");
   const parts = numericValue.split(".");
   const formattedValue =

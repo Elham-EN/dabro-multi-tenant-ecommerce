@@ -3,6 +3,8 @@
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState } from "react";
+import PriceFilter from "./PriceFilter";
+import { useProductFilters } from "../hooks/useProductFilters";
 
 interface ProductFilterProps {
   title: string;
@@ -34,16 +36,29 @@ function ProductFilter({
 }
 
 export default function ProductFilters(): React.ReactElement {
+  const [filters, setFilters] = useProductFilters();
+  const onChange = (key: keyof typeof filters, value: unknown) => {
+    setFilters({ ...filters, [key]: value });
+  };
   return (
     <div className="border bg-white rounded-md">
       <div className="p-4 border-b flex items-center justify-between">
         <p>Filters</p>
-        <button type="button" className="underline" onClick={() => {}}>
+        <button
+          type="button"
+          className="underline cursor-pointer"
+          onClick={() => {}}
+        >
           Clear
         </button>
       </div>
       <ProductFilter title="Price" className="border-b-0">
-        <p>Price Filter</p>
+        <PriceFilter
+          minPrice={filters.minPrice}
+          maxPrice={filters.maxPrice}
+          onMinPriceChange={(value) => onChange("minPrice", value)}
+          onMaxPriceChange={(value) => onChange("maxPrice", value)}
+        />
       </ProductFilter>
     </div>
   );
