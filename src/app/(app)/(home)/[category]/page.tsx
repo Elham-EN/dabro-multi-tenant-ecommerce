@@ -1,23 +1,27 @@
+import React, { Suspense } from "react";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { SearchParams } from "nuqs/server";
 import { getQueryClient, trpc } from "@/lib/trpc/server";
 import ProductFilters from "@/modules/products/components/ProductFilters";
 import ProductList from "@/modules/products/components/ProductList";
 import ProductListSkeleton from "@/modules/products/components/ProductListSkeleton";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import React, { Suspense } from "react";
+import { loadProductFilters } from "@/modules/products/hooks/useProductFilters";
 
 interface Props {
   params: Promise<{ category: string }>;
+  searchParams: Promise<SearchParams>;
 }
 // The Server Side Component (page.tsx):
-export default async function page({ params }: Props) {
+export default async function page({ params, searchParams }: Props) {
   const { category } = await params;
+  const filters = await loadProductFilters(searchParams);
   const queryClient = getQueryClient();
   // Server component to prefetch products:
   // - Fetches the products data on the server
   // - Stores it in the server's query cache
   // - This happens before any HTML is sent to the browser
   void queryClient.prefetchQuery(
-    trpc.products.getMany.queryOptions({ category })
+    trpc.products.getMany.queryOptions({ category, ...filters })
   );
 
   return (

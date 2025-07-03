@@ -3,6 +3,7 @@
 import React from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/lib/trpc/client";
+import { useProductFilters } from "../hooks/useProductFilters";
 
 interface Props {
   category?: string;
@@ -15,9 +16,10 @@ interface Props {
 // - Is data fresh enough? → YES (just fetched)
 // - Result: Returns the data immediately, data is guaranteed to be defined
 function ProductList({ category }: Props): React.ReactElement {
+  const [filters] = useProductFilters();
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.products.getMany.queryOptions({ category })
+    trpc.products.getMany.queryOptions({ category, ...filters })
   );
 
   return (
@@ -27,6 +29,7 @@ function ProductList({ category }: Props): React.ReactElement {
           <h1 className="text-4xl">
             Product Name: <span className="text-red-400">{product.name}</span>
           </h1>
+          <p>Product Price: ${product.price}</p>
         </div>
       ))}
     </div>

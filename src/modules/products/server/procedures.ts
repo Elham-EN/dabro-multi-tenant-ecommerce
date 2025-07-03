@@ -32,21 +32,6 @@ export const productsRouter = createTRPCRouter({
         };
       }
 
-      // if (input.minPrice) {
-      //   if (where.price) {
-      //   }
-
-      //   where.price = {
-      //     greater_than_equal: input.minPrice,
-      //   };
-      // }
-
-      // if (input.maxPrice) {
-      //   where.price = {
-      //     less_than_equal: input.maxPrice,
-      //   };
-      // }
-
       if (input.category) {
         // STEP 1: Find the category by its slug
         const categoriesData = await ctx.payload.find({
