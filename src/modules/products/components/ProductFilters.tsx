@@ -37,20 +37,31 @@ function ProductFilter({
 
 export default function ProductFilters(): React.ReactElement {
   const [filters, setFilters] = useProductFilters();
-  const onChange = (key: keyof typeof filters, value: unknown) => {
+  const onChange = (key: keyof typeof filters, value: unknown): void => {
     setFilters({ ...filters, [key]: value });
+  };
+  const hasAnyFilters = Object.entries(filters).some(([, value]) => {
+    if (typeof value === "string") {
+      return value !== "";
+    }
+    return value !== null;
+  });
+  const onClear = (): void => {
+    setFilters({ maxPrice: "", minPrice: "" });
   };
   return (
     <div className="border bg-white rounded-md">
       <div className="p-4 border-b flex items-center justify-between">
         <p>Filters</p>
-        <button
-          type="button"
-          className="underline cursor-pointer"
-          onClick={() => {}}
-        >
-          Clear
-        </button>
+        {hasAnyFilters && (
+          <button
+            type="button"
+            className="underline cursor-pointer"
+            onClick={onClear}
+          >
+            Clear
+          </button>
+        )}
       </div>
       <ProductFilter title="Price" className="border-b-0">
         <PriceFilter
