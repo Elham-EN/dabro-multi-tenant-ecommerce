@@ -11,6 +11,7 @@ import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Categories } from "./collections/Categories";
 import { Products } from "./collections/Products";
+import { Tags } from "./collections/Tags";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -27,7 +28,7 @@ export default buildConfig({
     },
   },
   // An array of Collections for Payload to manage
-  collections: [Users, Media, Categories, Products],
+  collections: [Users, Media, Categories, Products, Tags],
   // The Rich Text Editor which will be used by richText fields.
   editor: lexicalEditor(),
   // Payload will use for any encryption workflows -

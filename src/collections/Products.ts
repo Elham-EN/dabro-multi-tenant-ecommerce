@@ -28,6 +28,15 @@ export const Products: CollectionConfig = {
       hasMany: false,
     },
     {
+      name: "tags",
+      type: "relationship",
+      relationTo: "tags",
+      // one product can be tagged with multiple tags
+      // Example: iPhone → ["Electronics", "Bestseller", "Premium", "Apple"]
+      hasMany: true,
+    },
+
+    {
       name: "image",
       type: "upload",
       relationTo: "media",

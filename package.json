@@ -20,6 +20,7 @@
     "@payloadcms/next": "^3.42.0",
     "@payloadcms/payload-cloud": "^3.42.0",
     "@payloadcms/richtext-lexical": "^3.42.0",
+    "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-progress": "^1.1.7",
