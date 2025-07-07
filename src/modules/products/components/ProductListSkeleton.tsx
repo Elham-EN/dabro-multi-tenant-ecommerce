@@ -5,7 +5,7 @@ export default function ProductListSkeleton(): React.ReactElement {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
       {/* Generate 8 skeleton cards to match typical product grid */}
-      {Array.from({ length: 8 }).map((_, index) => (
+      {Array.from({ length: 6 }).map((_, index) => (
         <div key={index} className="border rounded-md bg-white p-2">
           {/* Product image skeleton */}
           <Skeleton className="h-48 w-full rounded-md mb-3" />

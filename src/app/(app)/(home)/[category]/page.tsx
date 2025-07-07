@@ -6,6 +6,7 @@ import ProductFilters from "@/modules/products/components/ProductFilters";
 import ProductList from "@/modules/products/components/ProductList";
 import ProductListSkeleton from "@/modules/products/components/ProductListSkeleton";
 import { loadProductFilters } from "@/modules/products/hooks/useProductFilters";
+import ProductSort from "@/modules/products/components/ProductSort";
 
 interface Props {
   params: Promise<{ category: string }>;
@@ -30,6 +31,10 @@ export default async function page({ params, searchParams }: Props) {
     // passed to HydrationBoundary so it can be hydrated on the client
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="px-4 lg:p-12 flex flex-col gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-y-2 lg:gap-y-0 justify-between">
+          <p className="text-2xl font-medium">Curated for you</p>
+          <ProductSort />
+        </div>
         <div
           className="grid grid-cols-1 lg:grid-cols-6 
           xl:grid-cols-8 gap-y-6 gap-x-12"
