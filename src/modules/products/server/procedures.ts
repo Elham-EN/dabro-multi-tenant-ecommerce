@@ -1,5 +1,5 @@
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
-import { Category } from "@/payload-types";
+import { Category, Media } from "@/payload-types";
 import { Sort, Where } from "payload";
 import { z } from "zod";
 import { sortValues } from "../hooks/useProductFilters";
@@ -34,6 +34,7 @@ export const productsRouter = createTRPCRouter({
         sort = "-createdAt";
       }
 
+      // Sorting Algorthims
       if (input.minPrice && input.maxPrice) {
         where.price = {
           greater_than_equal: input.minPrice,
@@ -104,12 +105,18 @@ export const productsRouter = createTRPCRouter({
       // STEP 4: Get products matching the filter
       const data = await ctx.payload.find({
         collection: "products",
-        depth: 1, // Populate "category" & "image" relationship data
+        depth: 1, // Populate "category" & "image"
         where: where, // Apply our smart category filter
         sort: sort,
       });
 
-      return data;
+      return {
+        ...data,
+        docs: data.docs.map((doc) => ({
+          ...doc,
+          image: doc.image as Media | null,
+        })),
+      };
     }),
 });
 
