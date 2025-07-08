@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -70,7 +69,7 @@ export default function ProductCard({
                 className="rounded-full border-2 border-gray-100 object-cover size-8"
               />
             </div>
-            <p className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <p className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors underline">
               by {authorUsername || "Anonymous"}
             </p>
           </div>
@@ -86,14 +85,6 @@ export default function ProductCard({
             <span className="text-sm text-gray-500">
               ({reviewCount.toLocaleString()})
             </span>
-          </div>
-
-          {/* Spacer to push content to bottom */}
-          <div className="flex-1" />
-
-          {/* Call to Action */}
-          <div className="bg-amber-300">
-            <Button className="w-full">View Details</Button>
           </div>
         </div>
       </div>
