@@ -3,11 +3,15 @@ import { Category, Media } from "@/payload-types";
 import { Sort, Where } from "payload";
 import { z } from "zod";
 import { sortValues } from "../hooks/useProductFilters";
+import { DEFAULT_LIMIT } from "../constants";
 
 export const productsRouter = createTRPCRouter({
   getMany: baseProcedure
     .input(
       z.object({
+        // For Infinite loading for products
+        cursor: z.number().default(1),
+        limit: z.number().default(DEFAULT_LIMIT),
         // Accept a category slug (like "mens-clothing" or "mens-shoes")
         category: z.string().nullable().optional(),
         minPrice: z.string().nullable().optional(),
@@ -108,6 +112,8 @@ export const productsRouter = createTRPCRouter({
         depth: 1, // Populate "category" & "image"
         where: where, // Apply our smart category filter
         sort: sort,
+        page: input.cursor,
+        limit: input.limit,
       });
 
       return {

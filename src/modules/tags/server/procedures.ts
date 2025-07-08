@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
+import { DEFAULT_LIMIT } from "@/modules/products/constants";
 
 export const tagsRouter = createTRPCRouter({
   // API endpoint: fetches tags from the database with pagination
@@ -10,7 +11,7 @@ export const tagsRouter = createTRPCRouter({
         // Which page to get (default: page 1)
         cursor: z.number().default(1),
         // How many tags per page (default: 10)
-        limit: z.number().default(10),
+        limit: z.number().default(DEFAULT_LIMIT),
       })
     )
     .query(async ({ ctx, input }) => {
