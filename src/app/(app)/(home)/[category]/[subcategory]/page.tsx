@@ -1,9 +1,13 @@
 import React from "react";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+} from "@tanstack/react-query";
 import { SearchParams } from "nuqs/server";
 import { getQueryClient, trpc } from "@/lib/trpc/server";
 import ProductListView from "@/modules/products/views/ProductListView";
 import { loadProductFilters } from "@/modules/products/hooks/useProductFilters";
+import { DEFAULT_LIMIT } from "@/modules/products/constants";
 
 interface Props {
   params: Promise<{
@@ -12,7 +16,10 @@ interface Props {
   searchParams: Promise<SearchParams>;
 }
 
-export default async function page({ params, searchParams }: Props) {
+export default async function page({
+  params,
+  searchParams,
+}: Props) {
   const { subcategory } = await params;
   const filters = await loadProductFilters(searchParams);
   const queryClient = getQueryClient();
@@ -20,8 +27,12 @@ export default async function page({ params, searchParams }: Props) {
   // - Fetches the products data on the server
   // - Stores it in the server's query cache
   // - This happens before any HTML is sent to the browser
-  void queryClient.prefetchQuery(
-    trpc.products.getMany.queryOptions({ category: subcategory, ...filters })
+  void queryClient.prefetchInfiniteQuery(
+    trpc.products.getMany.infiniteQueryOptions({
+      category: subcategory,
+      ...filters,
+      limit: DEFAULT_LIMIT,
+    })
   );
 
   return (
