@@ -19,32 +19,48 @@ interface Props {
 // - Is data already in cache? → YES (from server prefetch)
 // - Is data fresh enough? → YES (just fetched)
 // - Result: Returns the data immediately, data is guaranteed to be defined
-function ProductList({ category }: Props): React.ReactElement {
+function ProductList({
+  category,
+}: Props): React.ReactElement {
   const [filters] = useProductFilters();
   const trpc = useTRPC();
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useSuspenseInfiniteQuery(
-      trpc.products.getMany.infiniteQueryOptions(
-        { category, ...filters, limit: DEFAULT_LIMIT },
-        {
-          getNextPageParam: (lastPage) => {
-            return lastPage.docs.length > 0 ? lastPage.nextPage : undefined;
-          },
-        }
-      )
-    );
+  const {
+    data,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useSuspenseInfiniteQuery(
+    trpc.products.getMany.infiniteQueryOptions(
+      { category, ...filters, limit: DEFAULT_LIMIT },
+      {
+        getNextPageParam: (lastPage) => {
+          return lastPage.docs.length > 0
+            ? lastPage.nextPage
+            : undefined;
+        },
+      }
+    )
+  );
   if (data.pages?.[0]?.docs.length === 0) {
     return (
-      <div className="border border-black border-dashed flex flex-col items-center justify-center gap-y-4 p-8 w-full rounded-lg">
+      <div
+        className="border border-black border-dashed flex flex-col 
+        items-center justify-center gap-y-4 p-8 w-full rounded-lg"
+      >
         <InboxIcon />
-        <p className="text-base font-medium">No Product found</p>
+        <p className="text-base font-medium">
+          No Product found
+        </p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 
+        2xl:grid-cols-4 gap-4"
+      >
         {data.pages
           .flatMap((page) => page.docs)
           .map((product) => (
@@ -67,7 +83,8 @@ function ProductList({ category }: Props): React.ReactElement {
             disabled={isFetchingNextPage}
             onClick={() => fetchNextPage()}
             variant={"elevated"}
-            className="font-medium disabled:opacity-50 text-base bg-white"
+            className="font-medium disabled:opacity-50 text-base 
+              bg-white"
           >
             Load More
           </Button>

@@ -26,20 +26,28 @@ export default function ProductCard({
 }: ProductCardProps): React.ReactElement {
   return (
     <Link href={`/products/${id}`} className="group block">
-      <div className="bg-white rounded-sm border border-black overflow-hidden h-full flex flex-col  hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow hover:border-gray-300">
+      <div
+        className="bg-white rounded-sm border border-black 
+        overflow-hidden h-full flex flex-col hover:border-gray-300 
+        hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+      >
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-50">
           <Image
             src={imageUrl || "/productImage.png"}
             fill
             alt={name}
-            className="object-fit transition-transform duration-300 group-hover:scale-105"
+            className="object-fit transition-transform duration-300 
+              group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
 
           {/* Floating Price Badge */}
           <div className="absolute top-3 right-3">
-            <div className="bg-pink-400 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md border">
+            <div
+              className="bg-pink-400 backdrop-blur-sm px-3 py-1.5 
+              rounded-full shadow-md border"
+            >
               <p className="text-sm font-semibold text-gray-900">
                 {new Intl.NumberFormat("en-AU", {
                   style: "currency",
@@ -54,7 +62,10 @@ export default function ProductCard({
         {/* Card Content */}
         <div className="flex flex-col gap-3 p-4 sm:p-5 flex-1">
           {/* Product Name */}
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-gray-700 transition-colors">
+          <h3
+            className="text-base sm:text-lg font-semibold text-gray-900 
+          line-clamp-2 leading-tight group-hover:text-gray-700 transition-colors"
+          >
             {name}
           </h3>
 
@@ -69,7 +80,10 @@ export default function ProductCard({
                 className="rounded-full border-2 border-gray-100 object-cover size-8"
               />
             </div>
-            <p className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors underline">
+            <p
+              className="text-sm font-medium text-gray-600 hover:text-gray-900 
+              transition-colors underline"
+            >
               by {authorUsername || "Anonymous"}
             </p>
           </div>

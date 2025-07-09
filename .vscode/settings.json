@@ -1,15 +1,31 @@
 {
   "jest.shell": {
     "path": "/bin/bash",
-    "args": ["--login"]
+    "args": [
+      "--login"
+    ]
   },
   "jest.jestCommandLine": "npm test --",
   "terminal.integrated.automationProfile.osx": {
     "path": "/bin/bash",
-    "args": ["-l"]
+    "args": [
+      "-l"
+    ]
   },
 
   "jest.runMode": "on-demand",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "java.completion.favoriteStaticMembers": [
+    "org.junit.Assert.*",
+    "org.junit.Assume.*",
+    "org.junit.jupiter.api.Assertions.*",
+    "org.junit.jupiter.api.Assumptions.*",
+    "org.junit.jupiter.api.DynamicContainer.*",
+    "org.junit.jupiter.api.DynamicTest.*",
+    "org.mockito.Mockito.*",
+    "org.mockito.ArgumentMatchers.*",
+    "org.mockito.Answers.*"
+  ],
+  "prettier.printWidth": 60
 }
