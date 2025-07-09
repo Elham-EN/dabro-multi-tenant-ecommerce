@@ -1,7 +1,9 @@
 import { RefObject } from "react";
 
 // Dropdown always appears in the correct spot relative to the button
-function useDropdownPosition(ref: RefObject<HTMLDivElement | null>) {
+function useDropdownPosition(
+  ref: RefObject<HTMLDivElement | null>
+) {
   const getDropdownPosition = () => {
     // If we can't detect that div element, then we don't try putting
     // in a special position, just return the default
@@ -21,7 +23,7 @@ function useDropdownPosition(ref: RefObject<HTMLDivElement | null>) {
     // window.scrollY = How far the user scrolled vertically
     // rect.top + window.scrollY = Actual distance from bottom of
     // entire webpage
-    const top = rect.bottom + window.scrollY;
+    const top = rect.bottom;
 
     // Check if dropdown would go off the right edge of the viewport
     if (left + dropdownWidth > window.innerWidth) {

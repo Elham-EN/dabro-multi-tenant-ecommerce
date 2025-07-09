@@ -16,7 +16,11 @@ export default function SubcategoryMenu({
   isOpen,
   dropdownPosition,
 }: Props): ReactElement | null {
-  if (!isOpen || !category.subcategories || category.subcategories.length === 0)
+  if (
+    !isOpen ||
+    !category.subcategories ||
+    category.subcategories.length === 0
+  )
     return null;
 
   const backgroundColor = category.color || "#F5F5F5";

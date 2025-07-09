@@ -1,6 +1,10 @@
 "use client";
 
-import React, { ReactElement, useRef, useState } from "react";
+import React, {
+  ReactElement,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import useDropdownPosition from "../_hooks/useDropdownPosition";
@@ -21,7 +25,8 @@ function CategoryDropdown({
 }: Props): ReactElement {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { getDropdownPosition } = useDropdownPosition(dropdownRef);
+  const { getDropdownPosition } =
+    useDropdownPosition(dropdownRef);
   const dropdownPosition = getDropdownPosition();
 
   // If we have something to show, only than open the subcategory menu
@@ -47,17 +52,22 @@ function CategoryDropdown({
           variant={"elevated"}
           className={cn(
             "h-11 px-4 rounded-full",
-            isActive && !isNavigationHovered && "bg-black text-white ",
+            isActive &&
+              !isNavigationHovered &&
+              "bg-black text-white ",
             isOpen &&
               "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[4px] -translate-y-[4px]"
           )}
         >
-          <Link href={`/${category.slug === "all" ? "" : category.slug}`}>
+          <Link
+            href={`/${category.slug === "all" ? "" : category.slug}`}
+          >
             {category.name}
           </Link>
         </Button>
         {category.subcategories &&
-          (category.subcategories as CustomCategory[]).length > 0 && (
+          (category.subcategories as CustomCategory[])
+            .length > 0 && (
             <div
               className={cn(
                 "opacity-0 absolute left-1/2 -translate-x-1/2 border-l-[10px] border-r-[10px] border-b-[10px] border-b-black border-l-transparent border-r-transparent",
