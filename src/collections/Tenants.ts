@@ -5,7 +5,7 @@ export const Tenants: CollectionConfig = {
   admin: {
     useAsTitle: "slug",
   },
-  auth: true,
+  // auth: true,
   fields: [
     {
       name: "name",
