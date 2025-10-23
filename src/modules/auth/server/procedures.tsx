@@ -1,5 +1,11 @@
-import { headers as getHeaders, cookies as getCookies } from "next/headers";
-import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
+import {
+  headers as getHeaders,
+  cookies as getCookies,
+} from "next/headers";
+import {
+  baseProcedure,
+  createTRPCRouter,
+} from "@/lib/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { loginSchema, registerSchema } from "../schema";
 import { generateAuthCookie } from "./utils";
@@ -56,6 +62,15 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      const tenant = await ctx.payload.create({
+        collection: "tenants",
+        data: {
+          name: input.username,
+          slug: input.username,
+          stripeAccountId: "test",
+        },
+      });
+
       await ctx.payload.create({
         collection: "users",
         data: {
@@ -63,6 +78,13 @@ export const authRouter = createTRPCRouter({
           // Payload handle hashing
           password: input.password,
           username: input.username,
+          // Has to be an array, this plugin enables individual user to
+          // own multiple stores. in our CASE: ONE STORE PER TENANT
+          tenants: [
+            {
+              tenant: tenant.id,
+            },
+          ],
         },
       });
       const data = await ctx.payload.login({
@@ -85,28 +107,30 @@ export const authRouter = createTRPCRouter({
       });
     }),
 
-  login: baseProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
-    const data = await ctx.payload.login({
-      collection: "users",
-      data: {
-        email: input.email,
-        password: input.password,
-      },
-    });
-    if (!data.token) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Failed to authenticate",
+  login: baseProcedure
+    .input(loginSchema)
+    .mutation(async ({ input, ctx }) => {
+      const data = await ctx.payload.login({
+        collection: "users",
+        data: {
+          email: input.email,
+          password: input.password,
+        },
       });
-    }
-    // If have token, then set cookie
-    await generateAuthCookie({
-      prefix: ctx.payload.config.cookiePrefix,
-      value: data.token,
-    });
+      if (!data.token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Failed to authenticate",
+        });
+      }
+      // If have token, then set cookie
+      await generateAuthCookie({
+        prefix: ctx.payload.config.cookiePrefix,
+        value: data.token,
+      });
 
-    return data;
-  }),
+      return data;
+    }),
   logout: baseProcedure.mutation(async () => {
     const cookies = await getCookies();
     cookies.delete("payload-token");
