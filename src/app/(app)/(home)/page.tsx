@@ -1,18 +1,40 @@
-"use client";
-
-import { useTRPC } from "@/lib/trpc/client";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
+import { SearchParams } from "nuqs/server";
+import {
+  dehydrate,
+  HydrationBoundary,
+} from "@tanstack/react-query";
+import { getQueryClient, trpc } from "@/lib/trpc/server";
+import { loadProductFilters } from "@/modules/products/hooks/useProductFilters";
+import ProductListView from "@/modules/products/views/ProductListView";
+import { DEFAULT_LIMIT } from "@/modules/products/constants";
 
-export default function Home(): React.ReactElement {
-  const trpc = useTRPC();
-  const { data } = useQuery(trpc.auth.session.queryOptions());
-  console.log("====================================");
-  console.log(data);
-  console.log("====================================");
+interface Props {
+  searchParams: Promise<SearchParams>;
+}
+// The Server Side Component (page.tsx):
+export default async function Page({
+  searchParams,
+}: Props) {
+  const filters = await loadProductFilters(searchParams);
+  const queryClient = getQueryClient();
+  // Server component to prefetch products:
+  // - Fetches the products data on the server
+  // - Stores it in the server's query cache
+  // - This happens before any HTML is sent to the browser
+  void queryClient.prefetchInfiniteQuery(
+    trpc.products.getMany.infiniteQueryOptions({
+      ...filters,
+      limit: DEFAULT_LIMIT,
+    })
+  );
+
   return (
-    <div className="flex flex-col justify-center items-center p-10 gap-y-8">
-      <h1>Home</h1>
-    </div>
+    // Uses dehydrate() to convert the query cache into a serializable
+    // format that can be embedded in the markup. The dehydrated state gets
+    // passed to HydrationBoundary so it can be hydrated on the client
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProductListView />
+    </HydrationBoundary>
   );
 }
