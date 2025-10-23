@@ -14,7 +14,8 @@
     "test:client": "jest --config jest.config.ts",
     "test:all": "npm run test:client && npm run test:server",
     "db:fresh": "payload migrate:fresh",
-    "generate:types": "PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types"
+    "generate:types": "PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
+    "seed": "tsx --env-file=.env src/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
