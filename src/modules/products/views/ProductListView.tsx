@@ -6,10 +6,12 @@ import ProductSort from "../components/ProductSort";
 
 interface Props {
   category?: string;
+  tenantSlug?: string;
 }
 
 export default function ProductListView({
   category,
+  tenantSlug,
 }: Props) {
   return (
     <div className="px-4 lg:p-12 flex flex-col gap-4">
@@ -39,7 +41,10 @@ export default function ProductListView({
               - Is data fresh enough? → YES (just fetched)
               - Result: Returns the data immediately, data is guaranteed 
                 to be defined */}
-            <ProductList category={category} />
+            <ProductList
+              tenantSlug={tenantSlug}
+              category={category}
+            />
           </Suspense>
         </div>
       </div>

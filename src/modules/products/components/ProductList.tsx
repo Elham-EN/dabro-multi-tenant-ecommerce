@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 
 interface Props {
   category?: string;
+  tenantSlug?: string;
 }
 
 // The Client Side Component:
@@ -21,6 +22,7 @@ interface Props {
 // - Result: Returns the data immediately, data is guaranteed to be defined
 function ProductList({
   category,
+  tenantSlug,
 }: Props): React.ReactElement {
   const [filters] = useProductFilters();
   const trpc = useTRPC();
@@ -31,7 +33,12 @@ function ProductList({
     fetchNextPage,
   } = useSuspenseInfiniteQuery(
     trpc.products.getMany.infiniteQueryOptions(
-      { category, ...filters, limit: DEFAULT_LIMIT },
+      {
+        category,
+        ...filters,
+        tenantSlug,
+        limit: DEFAULT_LIMIT,
+      },
       {
         getNextPageParam: (lastPage) => {
           return lastPage.docs.length > 0
