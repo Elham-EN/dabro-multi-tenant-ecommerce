@@ -20,6 +20,7 @@ import { createTRPCRouter } from "../init";
 import { categoriesRouter } from "@/modules/categories/server/procedures";
 import { productsRouter } from "@/modules/products/server/procedures";
 import { tagsRouter } from "@/modules/tags/server/procedures";
+import { tenantsRouter } from "@/modules/tenants/server/procedures";
 
 /**
  * APP ROUTER - YOUR COMPLETE API
@@ -44,6 +45,7 @@ export const appRouter = createTRPCRouter({
   products: productsRouter,
   tags: tagsRouter,
   auth: authRouter,
+  tenants: tenantsRouter,
 
   // Add more routers here as your app grows:
   // products: productsRouter,

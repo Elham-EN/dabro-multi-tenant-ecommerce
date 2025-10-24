@@ -1,14 +1,16 @@
+import { generateTenantURL } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface ProductCardProps {
   id: string;
   name: string;
   imageUrl?: string | null;
-  authorUsername: string;
-  authorImageUrl?: string | null;
+  tenantSlug: string;
+  tenantImageUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
   price: number;
@@ -18,12 +20,21 @@ export default function ProductCard({
   id,
   name,
   imageUrl,
-  authorUsername,
-  authorImageUrl,
+  tenantSlug,
+  tenantImageUrl,
   reviewRating,
   reviewCount,
   price,
 }: ProductCardProps): React.ReactElement {
+  const router = useRouter();
+  const handleUserClick = (
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(generateTenantURL(tenantSlug));
+  };
+
   return (
     <Link href={`/products/${id}`} className="group block">
       <div
@@ -70,11 +81,14 @@ export default function ProductCard({
           </h3>
 
           {/* Author Info */}
-          <div className="flex items-center gap-2.5">
+          <div
+            className="flex items-center gap-2.5"
+            onClick={handleUserClick}
+          >
             <div className="relative shrink-0">
               <Image
-                src={authorImageUrl || "/productImage.png"}
-                alt={authorUsername || "Author"}
+                src={tenantImageUrl || "/productImage.png"}
+                alt={tenantSlug || "Author"}
                 width={32}
                 height={32}
                 className="rounded-full border-2 border-gray-100 object-cover size-8"
@@ -84,7 +98,7 @@ export default function ProductCard({
               className="text-sm font-medium text-gray-600 hover:text-gray-900 
               transition-colors underline"
             >
-              by {authorUsername || "Anonymous"}
+              by {tenantSlug || "Anonymous"}
             </p>
           </div>
 
