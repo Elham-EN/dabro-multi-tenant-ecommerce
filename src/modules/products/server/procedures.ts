@@ -1,5 +1,8 @@
-import { baseProcedure, createTRPCRouter } from "@/lib/trpc/init";
-import { Category, Media } from "@/payload-types";
+import {
+  baseProcedure,
+  createTRPCRouter,
+} from "@/lib/trpc/init";
+import { Category, Media, Tenant } from "@/payload-types";
 import { Sort, Where } from "payload";
 import { z } from "zod";
 import { sortValues } from "../hooks/useProductFilters";
@@ -69,13 +72,17 @@ export const productsRouter = createTRPCRouter({
         });
 
         // STEP 2: Format the category data and extract subcategories
-        const formatedData = categoriesData.docs.map((doc) => ({
-          ...doc,
-          subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
-            ...(doc as Category),
-            subcategories: undefined,
-          })),
-        }));
+        const formatedData = categoriesData.docs.map(
+          (doc) => ({
+            ...doc,
+            subcategories: (
+              doc.subcategories?.docs ?? []
+            ).map((doc) => ({
+              ...(doc as Category),
+              subcategories: undefined,
+            })),
+          })
+        );
 
         // STEP 3: Collect all category slugs to search for
         const subcategoriesSlugs = [];
@@ -93,7 +100,10 @@ export const productsRouter = createTRPCRouter({
           // For parent category: shows products from parent + all children
           // For subcategory: shows products from just that subcategory (no children)
           where["category.slug"] = {
-            in: [parentCategory.slug, ...subcategoriesSlugs],
+            in: [
+              parentCategory.slug,
+              ...subcategoriesSlugs,
+            ],
           };
         }
       }
@@ -109,7 +119,7 @@ export const productsRouter = createTRPCRouter({
       // STEP 4: Get products matching the filter
       const data = await ctx.payload.find({
         collection: "products",
-        depth: 1, // Populate "category" & "image"
+        depth: 2, // Populate "category", "image", tenant & tenant.image
         where: where, // Apply our smart category filter
         sort: sort,
         page: input.cursor,
@@ -121,6 +131,9 @@ export const productsRouter = createTRPCRouter({
         docs: data.docs.map((doc) => ({
           ...doc,
           image: doc.image as Media | null,
+          tenant: doc.tenant as Tenant & {
+            image: Media | null;
+          },
         })),
       };
     }),
