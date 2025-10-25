@@ -36,7 +36,10 @@ export default function ProductCard({
   };
 
   return (
-    <Link href={`/products/${id}`} className="group block">
+    <Link
+      href={`${generateTenantURL(tenantSlug)}/products/${id}`}
+      className="group block"
+    >
       <div
         className="bg-white rounded-sm border border-black 
         overflow-hidden h-full flex flex-col hover:border-gray-300 
