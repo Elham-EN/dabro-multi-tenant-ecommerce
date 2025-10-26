@@ -19,8 +19,16 @@ export const productsRouter = createTRPCRouter({
       const product = await ctx.payload.findByID({
         collection: "products",
         id: input.id,
+        // Load the "product.image", "product.tenant" & "product.tenant.image"
+        depth: 2,
       });
-      return product;
+      return {
+        ...product,
+        image: product.image as Media | null,
+        tenant: product.tenant as Tenant & {
+          image: Media | null;
+        },
+      };
     }),
   getMany: baseProcedure
     .input(
