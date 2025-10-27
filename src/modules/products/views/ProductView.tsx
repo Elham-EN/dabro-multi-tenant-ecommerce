@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useTRPC } from "@/lib/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -12,6 +13,26 @@ import { Button } from "@/components/ui/button";
 import { LinkIcon, StarIcon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
+// Load CartButton only on the client side to avoid hydration errors
+// CartButton uses localStorage (browser-only), which doesn't exist
+// on the server If we render it on the server, it shows "empty cart"
+// but client shows "items in cart" This mismatch causes hydration
+// errors, so we skip server rendering entirely
+const CartButton = dynamic(
+  () =>
+    import("../components/CartButton").then(
+      (mod) => mod.CartButton
+    ),
+  {
+    // Don't render on server - client only!
+    ssr: false,
+    loading: () => (
+      <Button disabled className="flex-1 bg-pink-400">
+        Add to cart
+      </Button>
+    ),
+  }
+);
 type Props = {
   productId: string;
   tenantSlug: string;
@@ -122,12 +143,10 @@ function ProductView({
               <div className="flex flex-col gap-4 p-6 border-b">
                 {/* Button */}
                 <div className="flex flex-row items-center gap-2">
-                  <Button
-                    variant={"elevated"}
-                    className="flex-1 bg-pink-400"
-                  >
-                    Add to cart
-                  </Button>
+                  <CartButton
+                    tenantSlug={tenantSlug}
+                    productId={productId}
+                  />
                   <Button
                     className="size-12"
                     variant={"elevated"}
