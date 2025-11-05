@@ -23,12 +23,14 @@ export default function CheckoutItem({
   tenantName,
   tenantUrl,
   price,
+  isLast,
   onRemove,
 }: Props): React.ReactElement {
   return (
     <div
       className={cn(
-        "grid grid-cols-[8.5rem_1fr_auto] gap-4 pr-4 border rounded-sm bg-white"
+        "grid grid-cols-[8.5rem_1fr_auto] gap-4 pr-4 border-b",
+        isLast && "border-b-0"
       )}
     >
       {/* Product's image */}
@@ -38,7 +40,7 @@ export default function CheckoutItem({
             src={imageUrl || "/productImage.png"}
             alt={name}
             fill
-            className="object-cover rounded-l-sm"
+            className="object-cover "
           />
         </div>
       </div>
