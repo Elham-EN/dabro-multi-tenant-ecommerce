@@ -55,7 +55,7 @@ function ProductView({
             src={product.image?.url || "/productImage.png"}
             alt={product.name}
             fill
-            className="object-cover"
+            className="object-fill"
           />
         </div>
         {/* Product information */}
