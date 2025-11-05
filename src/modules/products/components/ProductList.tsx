@@ -5,9 +5,10 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/lib/trpc/client";
 import { useProductFilters } from "../hooks/useProductFilters";
 import { DEFAULT_LIMIT } from "../constants";
-import { InboxIcon } from "lucide-react";
+
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
+import ProductNotFound from "@/components/ui/ProductNotFound";
 
 interface Props {
   category?: string;
@@ -49,17 +50,7 @@ function ProductList({
     )
   );
   if (data.pages?.[0]?.docs.length === 0) {
-    return (
-      <div
-        className="border border-black border-dashed flex flex-col 
-        items-center justify-center gap-y-4 p-8 w-full rounded-lg"
-      >
-        <InboxIcon />
-        <p className="text-base font-medium">
-          No Product found
-        </p>
-      </div>
-    );
+    return <ProductNotFound />;
   }
 
   return (
