@@ -1,12 +1,40 @@
 import {
   baseProcedure,
   createTRPCRouter,
+  protectedProcedure,
 } from "@/lib/trpc/init";
 import { Media, Tenant } from "@/payload-types";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const checkoutRouter = createTRPCRouter({
+  purchase: protectedProcedure
+    .input(
+      z.object({
+        productIds: z.array(z.string()).min(1),
+        tenantSlug: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const products = await ctx.payload.find({
+        collection: "products",
+        depth: 2,
+        where: {
+          and: [
+            {
+              id: {
+                in: input.productIds,
+              },
+            },
+            {
+              "tenant.slug": {
+                equals: input.tenantSlug,
+              },
+            },
+          ],
+        },
+      });
+    }),
   getProducts: baseProcedure
     .input(
       z.object({
