@@ -40,6 +40,8 @@ export default function CheckoutItem({
             src={imageUrl || "/productImage.png"}
             alt={name}
             fill
+            sizes="(max-width: 768px) 100vw, 8.5rem"
+            priority
             className="object-cover "
           />
         </div>
