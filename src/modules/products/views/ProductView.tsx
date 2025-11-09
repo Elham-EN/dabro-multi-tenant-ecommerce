@@ -56,6 +56,7 @@ function ProductView({
             alt={product.name}
             fill
             className="object-fill"
+            priority
           />
         </div>
         {/* Product information */}
