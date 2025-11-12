@@ -147,6 +147,7 @@ function ProductView({
                   <CartButton
                     tenantSlug={tenantSlug}
                     productId={productId}
+                    isPurchased={product.isPurchased}
                   />
                   <Button
                     className="size-12"
