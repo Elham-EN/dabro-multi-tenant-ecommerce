@@ -4,6 +4,7 @@ import { useTRPC } from "@/lib/trpc/client";
 import {
   useMutation,
   useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -32,6 +33,7 @@ export default function CheckoutView({
     clearCart,
   } = useCart(tenantSlug);
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery(
     trpc.checkout.getProducts.queryOptions({
       ids: productIds,
@@ -64,12 +66,19 @@ export default function CheckoutView({
   React.useEffect(() => {
     if (queryStates.success) {
       clearCart();
-      // TODO: Invalidate Library
-      // After user purchase product successfully
-      router.push("/products");
+      // Refetch the library after user purchased the product
+      queryClient.invalidateQueries(
+        trpc.library.getMany.infiniteQueryFilter()
+      );
+      // Then redirect the user to the library page
+      router.push("/library");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryStates.success]);
+  }, [
+    queryStates.success,
+    queryClient,
+    trpc.library.getMany,
+  ]);
 
   React.useEffect(() => {
     if (error?.data?.code === "NOT_FOUND") {
