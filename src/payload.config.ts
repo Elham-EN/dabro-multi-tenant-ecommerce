@@ -15,6 +15,7 @@ import { Products } from "./collections/Products";
 import { Tags } from "./collections/Tags";
 import { Tenants } from "./collections/Tenants";
 import { Orders } from "./collections/Orders";
+import { Reviews } from "./collections/Reviews";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -39,6 +40,7 @@ export default buildConfig({
     Tags,
     Tenants,
     Orders,
+    Reviews,
   ],
   // The Rich Text Editor which will be used by richText fields.
   editor: lexicalEditor(),
