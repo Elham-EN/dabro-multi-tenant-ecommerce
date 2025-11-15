@@ -188,6 +188,15 @@ const { data } = useQuery(trpc.categories.getMany.queryOptions());
 - User roles defined in Users collection for authorization
 - Protected routes check user session server-side
 
+## Git Commit Guidelines
+
+When creating git commits:
+- Write clear, descriptive commit messages that explain the "why" not just the "what"
+- Follow the existing commit message style in the repository
+- **DO NOT** include "🤖 Generated with [Claude Code]" footer
+- **DO NOT** include "Co-Authored-By: Claude" attribution
+- Keep commit messages concise (1-2 sentences focused on the purpose of changes)
+
 ## Important Notes
 
 - **Type Generation**: After modifying Payload collections, always run `npm run generate:types`
