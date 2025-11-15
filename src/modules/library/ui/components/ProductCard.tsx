@@ -24,7 +24,7 @@ export default function ProductCard({
   reviewCount,
 }: ProductCardProps): React.ReactElement {
   return (
-    <Link href={`/library${id}`} className="group block">
+    <Link href={`/library/${id}`} className="group block">
       <div
         className="bg-white rounded-sm border border-black 
         overflow-hidden h-full flex flex-col hover:border-gray-300 
