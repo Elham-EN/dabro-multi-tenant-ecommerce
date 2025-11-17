@@ -12,5 +12,6 @@
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "includeCoAuthoredBy": false
 }

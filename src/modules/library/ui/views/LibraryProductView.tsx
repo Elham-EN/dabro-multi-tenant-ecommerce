@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import ReviewSidebar from "../components/ReviewSidebar";
 
 type Props = {
   productId: string;
@@ -46,7 +47,7 @@ export default function LibraryProductView({
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 lg:gap-16">
           {/* First Column - Review's Sidebar */}
           <div className=" bg-red-200 lg:col-span-2">
-            <div>TODO: Review Sidebar</div>
+            <ReviewSidebar />
           </div>
           {/* Second Column */}
           <div className=" bg-green-200 lg:col-span-5">
