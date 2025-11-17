@@ -18,6 +18,9 @@ export default async function Page({ params }: Props) {
       productId: productId,
     })
   );
+  void queryClient.prefetchQuery(
+    trpc.reviews.getOne.queryOptions({ productId })
+  );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <LibraryProductView productId={productId} />

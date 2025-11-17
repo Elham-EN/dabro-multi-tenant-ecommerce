@@ -46,8 +46,8 @@ export default function LibraryProductView({
       <section className="max-w-(--breakpoint-xl) mx-auto px-4 lg:px-12 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 lg:gap-16">
           {/* First Column - Review's Sidebar */}
-          <div className=" bg-red-200 lg:col-span-2">
-            <ReviewSidebar />
+          <div className=" lg:col-span-2">
+            <ReviewSidebar productId={productId} />
           </div>
           {/* Second Column */}
           <div className=" bg-green-200 lg:col-span-5">
