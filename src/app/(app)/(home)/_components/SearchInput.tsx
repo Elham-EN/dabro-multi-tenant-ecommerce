@@ -6,7 +6,7 @@ import {
   ListFilterIcon,
   SearchIcon,
 } from "lucide-react";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import CategoriesSidebar from "./CategoriesSidebar";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/lib/trpc/client";
@@ -20,10 +20,16 @@ interface Props {
 function SearchInput({ disabled }: Props): ReactElement {
   const [isSidebarOpen, setIsSidebarOpen] =
     useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
   const trpc = useTRPC();
   const session = useQuery(
     trpc.auth.session.queryOptions()
   );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="flex items-center gap-2 w-full">
       <CategoriesSidebar
@@ -48,24 +54,13 @@ function SearchInput({ disabled }: Props): ReactElement {
       >
         <ListFilterIcon />
       </Button>
-      {/* {session.data?.user && (
+      {mounted && session.data?.user && (
         <Button asChild variant={"elevated"}>
           <Link href={"/library"}>
             <BookmarkCheckIcon />
-            Library
           </Link>
         </Button>
-      )} */}
-      {/* This tells React: "Only render this on the 
-      client, never on the server" */}
-      {typeof window !== "undefined" &&
-        session.data?.user && (
-          <Button asChild variant={"elevated"}>
-            <Link href={"/library"}>
-              <BookmarkCheckIcon />
-            </Link>
-          </Button>
-        )}
+      )}
     </div>
   );
 }

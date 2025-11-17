@@ -18,8 +18,11 @@ interface LayoutProps {
 
 async function Layout({ children }: LayoutProps): Promise<ReactElement> {
   const queryClient = getQueryClient();
-  // Temporarily comment out prefetch to see the skeleton
-  void queryClient.prefetchQuery(trpc.categories.getMany.queryOptions());
+  // Prefetch data on server to prevent hydration errors
+  await Promise.all([
+    queryClient.prefetchQuery(trpc.categories.getMany.queryOptions()),
+    queryClient.prefetchQuery(trpc.auth.session.queryOptions()),
+  ]);
 
   return (
     <div className="flex flex-col min-h-screen">
