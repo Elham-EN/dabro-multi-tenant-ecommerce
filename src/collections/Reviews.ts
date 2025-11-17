@@ -16,7 +16,7 @@ export const Reviews: CollectionConfig = {
       type: "number",
       required: true,
       min: 1,
-      max: 2,
+      max: 5,
     },
     {
       name: "product",
