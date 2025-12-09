@@ -4,14 +4,19 @@ import dynamic from "next/dynamic";
 import { useTRPC } from "@/lib/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { Fragment, ReactElement } from "react";
+import { Fragment, ReactElement, useState } from "react";
 import { formatAsCurrency } from "../utils/formatAsCurrency";
 import Link from "next/link";
 import { generateTenantURL } from "@/lib/utils";
 import StarRating from "@/components/ui/StarRating";
 import { Button } from "@/components/ui/button";
-import { LinkIcon, StarIcon } from "lucide-react";
+import {
+  CheckCheckIcon,
+  LinkIcon,
+  StarIcon,
+} from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
 
 // Load CartButton only on the client side to avoid hydration errors
 // CartButton uses localStorage (browser-only), which doesn't exist
@@ -42,6 +47,8 @@ function ProductView({
   productId,
   tenantSlug,
 }: Props): ReactElement {
+  const [isCopied, setIsCopied] = useState(false);
+
   const trpc = useTRPC();
   const { data: product } = useSuspenseQuery(
     trpc.products.getOne.queryOptions({ id: productId })
@@ -102,13 +109,16 @@ function ProductView({
                 </Link>
               </div>
               {/* Hidden on Mobile */}
-              <div className="hidden lg:flex px-6 py-4 items-center justify-center">
+              <div className="hidden lg:flex px-6 py-4 items-center justify-center gap-2">
                 <div className="flex items-center gap-1">
                   <StarRating
-                    rating={4}
+                    rating={product.reviewRating}
                     iconClassName="size-4"
                   />
                 </div>
+                <p className="text-base font-medium">
+                  {product.reviewCount} ratings
+                </p>
               </div>
             </div>
             {/* Ratings For mobile only */}
@@ -118,11 +128,11 @@ function ProductView({
             >
               <div className="flex items-center gap-1">
                 <StarRating
-                  rating={4}
+                  rating={product.reviewRating}
                   iconClassName="size-4"
                 />
                 <p className="text-base font-medium">
-                  {5} ratings
+                  {product.reviewCount} ratings
                 </p>
               </div>
             </div>
@@ -152,10 +162,25 @@ function ProductView({
                   <Button
                     className="size-12"
                     variant={"elevated"}
-                    onClick={() => {}}
-                    disabled={false}
+                    onClick={() => {
+                      setIsCopied(true);
+                      navigator.clipboard.writeText(
+                        window.location.href
+                      );
+                      toast.success(
+                        "URL copied to clipboard"
+                      );
+                      setTimeout(() => {
+                        setIsCopied(false);
+                      }, 1000);
+                    }}
+                    disabled={isCopied}
                   >
-                    <LinkIcon />
+                    {isCopied ? (
+                      <CheckCheckIcon />
+                    ) : (
+                      <LinkIcon />
+                    )}
                   </Button>
                 </div>
                 {/* Policy */}
@@ -173,8 +198,10 @@ function ProductView({
                   </h3>
                   <div className="flex items-center gap-x-1 font-medium">
                     <StarIcon className="size-4 fill-black" />
-                    <p>({5})</p>
-                    <p className="text-base">{5} ratings</p>
+                    <p>({product.reviewRating})</p>
+                    <p className="text-base">
+                      {product.reviewCount} ratings
+                    </p>
                   </div>
                 </div>
                 {/* Progress Bar */}
@@ -188,10 +215,14 @@ function ProductView({
                         </span>
                       </div>
                       <Progress
-                        value={25}
+                        value={
+                          product.ratingDistribution[stars]
+                        }
                         className="h-[1lh]"
                       />
-                      <div>{0}%</div>
+                      <div>
+                        {product.ratingDistribution[stars]}%
+                      </div>
                     </Fragment>
                   ))}
                 </div>
