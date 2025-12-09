@@ -107,17 +107,19 @@ export default function ProductCard({
           </div>
 
           {/* Rating */}
-          <div className="flex items-center gap-1.5">
-            <div className="flex items-center gap-0.5">
-              <StarIcon className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium text-gray-900">
-                {reviewRating.toFixed(1)}
+          {reviewCount > 0 && (
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-0.5">
+                <StarIcon className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-medium text-gray-900">
+                  {reviewRating.toFixed(1)}
+                </span>
+              </div>
+              <span className="text-sm text-gray-500">
+                ({reviewCount.toLocaleString()})
               </span>
             </div>
-            <span className="text-sm text-gray-500">
-              ({reviewCount.toLocaleString()})
-            </span>
-          </div>
+          )}
         </div>
       </div>
     </Link>
