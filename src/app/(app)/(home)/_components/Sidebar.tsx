@@ -53,7 +53,7 @@ export default function Sidebar({
             <Link
               key={item.href}
               href={item.href}
-              className="w-full flex items-center text-left p-4 hover:bg-black 
+              className="w-full flex items-center text-left p-4 hover:bg-black
               hover:text-white"
             >
               {item.children}

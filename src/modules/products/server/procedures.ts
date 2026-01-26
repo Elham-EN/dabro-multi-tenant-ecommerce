@@ -10,77 +10,6 @@ import { sortValues } from "../hooks/useProductFilters";
 import { DEFAULT_LIMIT } from "../constants";
 
 export const productsRouter = createTRPCRouter({
-  search: baseProcedure
-    .input(
-      z.object({
-        query: z.string().min(1),
-        limit: z.number().default(10),
-        cursor: z.number().default(1),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.payload.find({
-        collection: "products",
-        depth: 2,
-        page: input.cursor,
-        limit: input.limit,
-        where: {
-          or: [
-            {
-              name: {
-                contains: input.query,
-              },
-            },
-            {
-              "category.name": {
-                contains: input.query,
-              },
-            },
-            {
-              "tags.name": {
-                contains: input.query,
-              },
-            },
-          ],
-        },
-      });
-
-      const dataWithSummarizedReviews = await Promise.all(
-        data.docs.map(async (doc) => {
-          const reviewData = await ctx.payload.find({
-            collection: "reviews",
-            pagination: false,
-            where: {
-              product: {
-                equals: doc.id,
-              },
-            },
-          });
-          return {
-            ...doc,
-            reviewCount: reviewData.totalDocs,
-            reviewRating:
-              reviewData.docs.length === 0
-                ? 0
-                : reviewData.docs.reduce(
-                    (acc, review) => acc + review.rating,
-                    0
-                  ) / reviewData.totalDocs,
-          };
-        })
-      );
-
-      return {
-        ...data,
-        docs: dataWithSummarizedReviews.map((doc) => ({
-          ...doc,
-          image: doc.image as Media | null,
-          tenant: doc.tenant as Tenant & {
-            image: Media | null;
-          },
-        })),
-      };
-    }),
   getOne: baseProcedure
     .input(
       z.object({
@@ -188,6 +117,8 @@ export const productsRouter = createTRPCRouter({
         // For Infinite loading for products
         cursor: z.number().default(1),
         limit: z.number().default(DEFAULT_LIMIT),
+        // Search term for product name, category, or tags
+        search: z.string().nullable().optional(),
         // Accept a category slug (like "mens-clothing" or "mens-shoes")
         category: z.string().nullable().optional(),
         minPrice: z.string().nullable().optional(),
@@ -200,6 +131,27 @@ export const productsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       // Start with empty filter - will get ALL products if no category provided
       const where: Where = {};
+
+      // Search filter - matches product name, category name, or tag names
+      if (input.search) {
+        where.or = [
+          {
+            name: {
+              contains: input.search,
+            },
+          },
+          {
+            "category.name": {
+              contains: input.search,
+            },
+          },
+          {
+            "tags.name": {
+              contains: input.search,
+            },
+          },
+        ];
+      }
 
       let sort: Sort = "-createdAt";
 

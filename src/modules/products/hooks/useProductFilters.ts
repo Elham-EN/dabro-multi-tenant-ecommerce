@@ -40,6 +40,14 @@ export const sortValues = ["curated", "trending", "hot_and_new"] as const;
  */
 export const params = {
   /**
+   * SEARCH FILTER
+   * parseAsString - Accepts any text value for product search
+   * clearOnDefault: true - If empty, remove from URL
+   * Example: ?search=figma
+   */
+  search: parseAsString.withOptions({ clearOnDefault: true }).withDefault(""),
+
+  /**
    * SORT FILTER
    * parseAsStringLiteral() - Only accepts values from sortValues array
    * withDefault("curated") - If no ?sort= in URL, use "curated"
