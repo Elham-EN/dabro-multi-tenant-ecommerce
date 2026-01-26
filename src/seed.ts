@@ -307,6 +307,383 @@ async function seed() {
     );
 
     // ============================================================
+    // SEED TENANTS (STORES)
+    // ============================================================
+    console.log("🏪 Seeding tenants (stores)...");
+
+    const tenantsData = [
+      { name: "PixelCraft Studios", slug: "pixelcraft-studios" },
+      { name: "SoundWave Audio", slug: "soundwave-audio" },
+      { name: "CodeMaster Academy", slug: "codemaster-academy" },
+      { name: "CinePro Visuals", slug: "cinepro-visuals" },
+      { name: "ArtNova Creations", slug: "artnova-creations" },
+      { name: "LensLight Photography", slug: "lenslight-photography" },
+      { name: "DevBooks Publishing", slug: "devbooks-publishing" },
+      { name: "3D Forge Assets", slug: "3d-forge-assets" },
+      { name: "ProductivityHub", slug: "productivity-hub" },
+      { name: "BeatLab Productions", slug: "beatlab-productions" },
+    ];
+
+    const createdTenants: Record<string, { id: string; name: string }> =
+      {};
+    let tenantsCreated = 0;
+
+    for (const tenantData of tenantsData) {
+      const existing = await payload.find({
+        collection: "tenants",
+        where: { slug: { equals: tenantData.slug } },
+        limit: 1,
+      });
+
+      if (existing.docs.length === 0) {
+        const tenant = await payload.create({
+          collection: "tenants",
+          data: {
+            name: tenantData.name,
+            slug: tenantData.slug,
+            stripeAccountId: `acct_demo_${tenantData.slug.replace(/-/g, "_")}`,
+            stripeDetailsSubmitted: true,
+          },
+        });
+        createdTenants[tenantData.slug] = tenant;
+        tenantsCreated++;
+        console.log(`   ✓ Created: ${tenantData.name}`);
+      } else {
+        createdTenants[tenantData.slug] = existing.docs[0];
+        console.log(`   ⏭️  Exists: ${tenantData.name}`);
+      }
+    }
+
+    console.log(
+      `✅ Tenants seeded: ${tenantsCreated} new stores created\n`,
+    );
+
+    // ============================================================
+    // SEED MEDIA (PRODUCT IMAGES)
+    // ============================================================
+    console.log("🖼️  Seeding media (product images)...");
+
+    const fs = await import("fs");
+    const path = await import("path");
+
+    const imageFiles = [
+      { file: "product-1.webp", alt: "Product showcase" },
+      { file: "productImage.png", alt: "Digital product" },
+      { file: "keyboardkitpro.jpg", alt: "Keyboard kit pro" },
+      { file: "coursebanner.png", alt: "Course banner" },
+      { file: "Harmonics Cover FINAL.jpg", alt: "Harmonics album cover" },
+      { file: "100MM_SP.png", alt: "100MM special product" },
+      { file: "new_publi_gumroad_1.png", alt: "New publication" },
+      { file: "TIKTOK AI STORIES.png", alt: "TikTok AI Stories" },
+      { file: "Flair.png", alt: "Flair design" },
+      { file: "Hero.png", alt: "Hero banner" },
+    ];
+
+    const createdMedia: string[] = [];
+
+    for (const imageData of imageFiles) {
+      const existing = await payload.find({
+        collection: "media",
+        where: { alt: { equals: imageData.alt } },
+        limit: 1,
+      });
+
+      if (existing.docs.length === 0) {
+        const filePath = path.join(
+          process.cwd(),
+          "public",
+          imageData.file
+        );
+
+        if (fs.existsSync(filePath)) {
+          try {
+            const media = await payload.create({
+              collection: "media",
+              data: {
+                alt: imageData.alt,
+              },
+              filePath,
+            });
+            createdMedia.push(media.id);
+            console.log(`   ✓ Uploaded: ${imageData.file}`);
+          } catch {
+            console.log(`   ⚠️  Failed to upload: ${imageData.file}`);
+          }
+        } else {
+          console.log(`   ⚠️  File not found: ${imageData.file}`);
+        }
+      } else {
+        createdMedia.push(existing.docs[0].id);
+        console.log(`   ⏭️  Exists: ${imageData.alt}`);
+      }
+    }
+
+    console.log(
+      `✅ Media seeded: ${createdMedia.length} images available\n`,
+    );
+
+    // ============================================================
+    // SEED PRODUCTS
+    // ============================================================
+    console.log("📦 Seeding products...");
+
+    // Get all categories and tags for reference
+    const allCategories = await payload.find({
+      collection: "categories",
+      limit: 100,
+    });
+    const allTags = await payload.find({
+      collection: "tags",
+      limit: 100,
+    });
+
+    const categoryMap = new Map(
+      allCategories.docs.map((c) => [c.slug, c.id])
+    );
+    const tagMap = new Map(
+      allTags.docs.map((t) => [t.name, t.id])
+    );
+
+    const productsData = [
+      {
+        name: "Ultimate UI Kit for Figma",
+        price: 49,
+        category: "design-graphics",
+        tags: ["Premium Quality", "Commercial Use", "Customizable"],
+        refundPolicy: "30-day" as const,
+        tenant: "pixelcraft-studios",
+        imageIndex: 0,
+      },
+      {
+        name: "Ambient Music Collection Vol. 1",
+        price: 29,
+        category: "music-tracks",
+        tags: ["Royalty Free", "Digital Download", "Commercial Use"],
+        refundPolicy: "14-day" as const,
+        tenant: "soundwave-audio",
+        imageIndex: 4,
+      },
+      {
+        name: "Python for Data Science Course",
+        price: 99,
+        category: "education-courses",
+        tags: ["Beginner Friendly", "Instant Access", "Best Seller"],
+        refundPolicy: "30-day" as const,
+        tenant: "codemaster-academy",
+        imageIndex: 3,
+      },
+      {
+        name: "100 Cinematic LUTs Pack",
+        price: 39,
+        category: "video-animation",
+        tags: ["Professional", "High Resolution", "Commercial Use"],
+        refundPolicy: "14-day" as const,
+        tenant: "cinepro-visuals",
+        imageIndex: 5,
+      },
+      {
+        name: "Fantasy Character Illustrations",
+        price: 25,
+        category: "illustrations",
+        tags: ["Digital Download", "Personal Use", "High Resolution"],
+        refundPolicy: "7-day" as const,
+        tenant: "artnova-creations",
+        imageIndex: 8,
+      },
+      {
+        name: "Sci-Fi Sound Effects Bundle",
+        price: 45,
+        category: "sound-effects",
+        tags: ["Bundle", "Royalty Free", "Premium Quality"],
+        refundPolicy: "14-day" as const,
+        tenant: "soundwave-audio",
+        imageIndex: 4,
+      },
+      {
+        name: "Urban Photography Preset Pack",
+        price: 19,
+        category: "lightroom-presets",
+        tags: ["Instant Access", "Customizable", "Trending"],
+        refundPolicy: "7-day" as const,
+        tenant: "lenslight-photography",
+        imageIndex: 9,
+      },
+      {
+        name: "The Complete JavaScript Guide eBook",
+        price: 35,
+        category: "ebooks",
+        tags: ["Beginner Friendly", "Digital Download", "Best Seller"],
+        refundPolicy: "30-day" as const,
+        tenant: "devbooks-publishing",
+        imageIndex: 6,
+      },
+      {
+        name: "Low Poly 3D Asset Pack",
+        price: 59,
+        category: "3d-models",
+        tags: ["Commercial Use", "Bundle", "Professional"],
+        refundPolicy: "14-day" as const,
+        tenant: "3d-forge-assets",
+        imageIndex: 1,
+      },
+      {
+        name: "Nature Stock Photo Collection",
+        price: 79,
+        category: "stock-photos",
+        tags: ["High Resolution", "Royalty Free", "Premium Quality"],
+        refundPolicy: "30-day" as const,
+        tenant: "lenslight-photography",
+        imageIndex: 9,
+      },
+      {
+        name: "Notion Life Planner Template",
+        price: 15,
+        category: "templates",
+        tags: ["Customizable", "Instant Access", "Personal Use"],
+        refundPolicy: "7-day" as const,
+        tenant: "productivity-hub",
+        imageIndex: 7,
+      },
+      {
+        name: "Electronic Music Production Course",
+        price: 149,
+        category: "education-courses",
+        tags: ["Professional", "Best Seller", "Trending"],
+        refundPolicy: "30-day" as const,
+        tenant: "beatlab-productions",
+        imageIndex: 4,
+      },
+      {
+        name: "Abstract Digital Art Collection",
+        price: 35,
+        category: "digital-art",
+        tags: ["Limited Edition", "High Resolution", "New Release"],
+        refundPolicy: "14-day" as const,
+        tenant: "artnova-creations",
+        imageIndex: 8,
+      },
+      {
+        name: "Podcast Intro Music Pack",
+        price: 25,
+        category: "music-tracks",
+        tags: ["Royalty Free", "Commercial Use", "Instant Access"],
+        refundPolicy: "7-day" as const,
+        tenant: "beatlab-productions",
+        imageIndex: 4,
+      },
+      {
+        name: "Mobile App UI Templates",
+        price: 69,
+        category: "design-graphics",
+        tags: ["Customizable", "Professional", "Bundle"],
+        refundPolicy: "30-day" as const,
+        tenant: "pixelcraft-studios",
+        imageIndex: 0,
+      },
+      {
+        name: "Motion Graphics Elements Pack",
+        price: 89,
+        category: "video-animation",
+        tags: ["Premium Quality", "Commercial Use", "High Resolution"],
+        refundPolicy: "14-day" as const,
+        tenant: "cinepro-visuals",
+        imageIndex: 5,
+      },
+      {
+        name: "Portrait Photography Masterclass",
+        price: 79,
+        category: "education-courses",
+        tags: ["Beginner Friendly", "Professional", "Best Seller"],
+        refundPolicy: "30-day" as const,
+        tenant: "lenslight-photography",
+        imageIndex: 3,
+      },
+      {
+        name: "Vintage Film Lightroom Presets",
+        price: 29,
+        category: "lightroom-presets",
+        tags: ["Trending", "Customizable", "New Release"],
+        refundPolicy: "7-day" as const,
+        tenant: "lenslight-photography",
+        imageIndex: 9,
+      },
+      {
+        name: "Business Plan Template Bundle",
+        price: 45,
+        category: "templates",
+        tags: ["Commercial Use", "Bundle", "Professional"],
+        refundPolicy: "14-day" as const,
+        tenant: "productivity-hub",
+        imageIndex: 6,
+      },
+      {
+        name: "Character Design Illustration Pack",
+        price: 55,
+        category: "illustrations",
+        tags: ["High Resolution", "Commercial Use", "Premium Quality"],
+        refundPolicy: "30-day" as const,
+        tenant: "artnova-creations",
+        imageIndex: 8,
+      },
+    ];
+
+    let productsCreated = 0;
+
+    for (const productData of productsData) {
+      // Check if product already exists
+      const existing = await payload.find({
+        collection: "products",
+        where: { name: { equals: productData.name } },
+        limit: 1,
+      });
+
+      const categoryId = categoryMap.get(productData.category);
+      const tagIds = productData.tags
+        .map((tagName) => tagMap.get(tagName))
+        .filter(Boolean) as string[];
+      const tenant = createdTenants[productData.tenant];
+      const imageId = createdMedia[productData.imageIndex];
+
+      if (existing.docs.length === 0) {
+        await payload.create({
+          collection: "products",
+          data: {
+            name: productData.name,
+            price: productData.price,
+            category: categoryId,
+            tags: tagIds,
+            refundPolicy: productData.refundPolicy,
+            tenant: tenant?.id,
+            image: imageId,
+          },
+        });
+        productsCreated++;
+        console.log(
+          `   ✓ Created: ${productData.name} (${tenant?.name})`,
+        );
+      } else {
+        // Update existing product with image if missing
+        const existingProduct = existing.docs[0];
+        if (!existingProduct.image && imageId) {
+          await payload.update({
+            collection: "products",
+            id: existingProduct.id,
+            data: {
+              image: imageId,
+            },
+          });
+          console.log(`   🔄 Updated image: ${productData.name}`);
+        } else {
+          console.log(`   ⏭️  Exists: ${productData.name}`);
+        }
+      }
+    }
+
+    console.log(
+      `✅ Products seeded: ${productsCreated} new products created\n`,
+    );
+
+    // ============================================================
     // FINAL MESSAGE
     // ============================================================
     console.log(
@@ -325,6 +702,8 @@ async function seed() {
       `   - Categories: ${categoriesCreated} created`,
     );
     console.log(`   - Tags: ${tagsCreated} created`);
+    console.log(`   - Tenants: ${tenantsCreated} created`);
+    console.log(`   - Products: ${productsCreated} created`);
     process.exit(0);
   } catch (error) {
     console.error("❌ Error during seed script execution:");

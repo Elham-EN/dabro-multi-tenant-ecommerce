@@ -19,7 +19,7 @@ export const checkoutRouter = createTRPCRouter({
       z.object({
         productIds: z.array(z.string()).min(1),
         tenantSlug: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const products = await ctx.payload.find({
@@ -121,7 +121,7 @@ export const checkoutRouter = createTRPCRouter({
     .input(
       z.object({
         ids: z.array(z.string()), // Array of strings
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const data = await ctx.payload.find({
@@ -145,7 +145,7 @@ export const checkoutRouter = createTRPCRouter({
         ...data,
         totalPrice: data.docs.reduce(
           (acc, product) => acc + product.price,
-          0
+          0,
         ),
         docs: data.docs.map((doc) => ({
           ...doc,
