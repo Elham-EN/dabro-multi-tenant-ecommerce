@@ -2,6 +2,7 @@ import {
   headers as getHeaders,
   cookies as getCookies,
 } from "next/headers";
+import { stripe } from "@/lib/stripe";
 import {
   baseProcedure,
   createTRPCRouter,
@@ -62,12 +63,22 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      // With Connect, you can create Stripe accounts for your users
+      const account = await stripe.accounts.create({});
+
+      if (!account) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to create stripe account",
+        });
+      }
+
       const tenant = await ctx.payload.create({
         collection: "tenants",
         data: {
           name: input.username,
           slug: input.username,
-          stripeAccountId: "test",
+          stripeAccountId: account.id,
         },
       });
 
