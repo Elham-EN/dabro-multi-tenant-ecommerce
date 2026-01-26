@@ -1,3 +1,4 @@
+import { isSuperAdmin } from "@/lib/access";
 import type { CollectionConfig } from "payload";
 
 // A Collection is a group of records, called Documents that
@@ -17,7 +18,17 @@ export const Categories: CollectionConfig = {
   // Unique, URL-friendly string that will act as an identifier
   // for this Collection.
   slug: "categories",
-  admin: { useAsTitle: "name" },
+  access: {
+    read: () => true,
+    create: ({ req }) => isSuperAdmin(req.user),
+    delete: ({ req }) => isSuperAdmin(req.user),
+    update: ({ req }) => isSuperAdmin(req.user),
+  },
+
+  admin: {
+    useAsTitle: "name",
+    hidden: ({ user }) => !isSuperAdmin(user),
+  },
   // Array of field types that will determine the structure and
   // functionality of the data stored within this Collection.
   fields: [

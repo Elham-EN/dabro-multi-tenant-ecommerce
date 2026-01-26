@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 // Import field helper that creates a relationship between Users and Tenants (stores)
 import { tenantsArrayField } from "@payloadcms/plugin-multi-tenant/fields";
+import { isSuperAdmin } from "@/lib/access";
 
 // Creates an array field that links this user to multiple tenants
 // (stores they own/access)
@@ -12,20 +13,31 @@ const defaultTenantArrayField = tenantsArrayField({
   tenantsArrayTenantFieldName: "tenant",
   arrayFieldAccess: {
     read: () => true,
-    create: () => true,
-    update: () => true,
+    create: ({ req }) => isSuperAdmin(req.user),
+    update: ({ req }) => isSuperAdmin(req.user),
   },
   tenantFieldAccess: {
     read: () => true,
-    create: () => true,
-    update: () => true,
+    create: ({ req }) => isSuperAdmin(req.user),
+    update: ({ req }) => isSuperAdmin(req.user),
   },
 });
 
 export const Users: CollectionConfig = {
   slug: "users",
+  access: {
+    read: () => true,
+    create: ({ req }) => isSuperAdmin(req.user),
+    delete: ({ req }) => isSuperAdmin(req.user),
+    update: ({ req, id }) => {
+      if (isSuperAdmin(req.user)) return true;
+      // Update your own account / profile
+      return req.user?.id === id;
+    },
+  },
   admin: {
     useAsTitle: "email",
+    hidden: ({ user }) => !isSuperAdmin(user),
   },
   auth: true,
   fields: [
@@ -50,6 +62,9 @@ export const Users: CollectionConfig = {
       hasMany: true,
       // Available roles to choose from
       options: ["super-admin", "user"],
+      access: {
+        update: ({ req }) => isSuperAdmin(req.user),
+      },
     },
     // Add the tenants array field - determines which stores this
     // user can access/manage

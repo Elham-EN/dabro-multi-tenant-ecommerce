@@ -1,7 +1,12 @@
+import { isSuperAdmin } from "@/lib/access";
 import { CollectionConfig } from "payload";
 
 export const Tenants: CollectionConfig = {
   slug: "tenants",
+  access: {
+    create: ({ req }) => isSuperAdmin(req.user),
+    delete: ({ req }) => isSuperAdmin(req.user),
+  },
   admin: {
     useAsTitle: "slug",
   },
@@ -40,8 +45,13 @@ export const Tenants: CollectionConfig = {
       name: "stripeAccountId",
       type: "text",
       required: true,
+      access: {
+        update: ({ req }) => isSuperAdmin(req.user),
+      },
       admin: {
         readOnly: true,
+        description:
+          "Stripe Account ID associated with your shop",
       },
     },
     // Ensure whether the person passed that stripe verification or not

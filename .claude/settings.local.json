@@ -1,4 +1,5 @@
 {
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(ls:*)",
@@ -8,10 +9,10 @@
       "Bash(npm run dev)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []
-  },
-  "includeCoAuthoredBy": false
+  }
 }
