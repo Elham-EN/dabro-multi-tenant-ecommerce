@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -19,7 +20,11 @@ export default function ContactPage() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -30,10 +35,13 @@ export default function ContactPage() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          Contact Us
+        </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Have a question or need help? We&apos;re here to assist you. Fill out
-          the form below or reach out through our other channels.
+          Have a question or need help? We&apos;re here to
+          assist you. Fill out the form below or reach out
+          through our other channels.
         </p>
       </div>
 
@@ -59,12 +67,15 @@ export default function ContactPage() {
                 Message Sent!
               </h3>
               <p className="text-gray-600">
-                Thank you for reaching out. We&apos;ll get back to you within
-                24-48 hours.
+                Thank you for reaching out. We&apos;ll get
+                back to you within 24-48 hours.
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-6"
+            >
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label
@@ -120,10 +131,18 @@ export default function ContactPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-shadow bg-white"
                 >
                   <option value="">Select a topic</option>
-                  <option value="general">General Inquiry</option>
-                  <option value="support">Technical Support</option>
-                  <option value="billing">Billing Question</option>
-                  <option value="partnership">Partnership Opportunity</option>
+                  <option value="general">
+                    General Inquiry
+                  </option>
+                  <option value="support">
+                    Technical Support
+                  </option>
+                  <option value="billing">
+                    Billing Question
+                  </option>
+                  <option value="partnership">
+                    Partnership Opportunity
+                  </option>
                   <option value="feedback">Feedback</option>
                 </select>
               </div>
@@ -179,8 +198,12 @@ export default function ContactPage() {
                   />
                 </svg>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Email</p>
-                  <p className="text-sm text-gray-600">support@dabro.com</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    Email
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    support@dabro.com
+                  </p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -214,40 +237,41 @@ export default function ContactPage() {
               Looking for Help?
             </h4>
             <p className="text-sm text-gray-600 mb-4">
-              Check out our resources for quick answers to common questions.
+              Check out our resources for quick answers to
+              common questions.
             </p>
             <ul className="space-y-2 text-sm">
               <li>
-                <a
+                <Link
                   href="/features"
                   className="text-gray-900 hover:underline font-medium"
                 >
                   Features Overview
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/pricing"
                   className="text-gray-900 hover:underline font-medium"
                 >
                   Pricing & Plans
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/terms"
                   className="text-gray-900 hover:underline font-medium"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/privacy"
                   className="text-gray-900 hover:underline font-medium"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -257,8 +281,9 @@ export default function ContactPage() {
               For Sellers
             </h4>
             <p className="text-sm text-gray-600">
-              Need help with your store? Log in to access seller support and
-              resources in your dashboard.
+              Need help with your store? Log in to access
+              seller support and resources in your
+              dashboard.
             </p>
           </div>
         </div>

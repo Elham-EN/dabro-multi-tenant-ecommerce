@@ -22,7 +22,7 @@ export const Products: CollectionConfig = {
     },
     {
       name: "description",
-      type: "richText",
+      type: "text",
     },
     {
       name: "price",
@@ -68,7 +68,7 @@ export const Products: CollectionConfig = {
     },
     {
       name: "content",
-      type: "richText",
+      type: "text",
       admin: {
         description:
           "Protected content only visible to customers after purchase. Add product doc, downloadable files, getting started guides and bonus materials.",
