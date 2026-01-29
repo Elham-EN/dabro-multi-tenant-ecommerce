@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { caller } from "@/lib/trpc/server";
 import SignUpView from "../_components/SignUpView";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Dabro | Register",
   description: "Dabro's Sign up page",
