@@ -73,7 +73,7 @@ export default buildConfig({
       userHasAccessToAllTenants: (user) =>
         Boolean(user.roles?.includes("super-admin")),
     }),
-    // storage-adapter-placeholder
+
     vercelBlobStorage({
       enabled: true,
       collections: {
